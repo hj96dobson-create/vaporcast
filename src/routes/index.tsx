@@ -465,7 +465,7 @@ function Testimonials() {
 const tiers = [
   {
     name: "Starter",
-    price: "$0",
+    price: "£0",
     sub: "Try Vaporcast free",
     feats: ["3 videos / month", "720p export", "20+ avatars", "Watermark"],
     cta: "Start free",
