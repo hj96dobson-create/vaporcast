@@ -473,7 +473,7 @@ const tiers = [
   },
   {
     name: "Creator",
-    price: "$49",
+    price: "£49",
     sub: "per month, billed monthly",
     feats: ["100 videos / month", "4K export", "All 300+ avatars", "29 languages", "No watermark"],
     cta: "Start 7-day trial",
