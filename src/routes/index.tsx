@@ -83,7 +83,7 @@ const steps = [
 const testimonials = [
   {
     quote:
-      "We replaced a $40k/mo UGC budget with Vaporcast and shipped 200 ad variants in a week.",
+      "We replaced a £40k/mo UGC budget with Vaporcast and shipped 200 ad variants in a week.",
     name: "Maya Chen",
     role: "Head of Growth, Lumio",
   },
