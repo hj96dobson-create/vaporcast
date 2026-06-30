@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Vapor Cast" },
+      { name: "description", content: "Createify Your Way is a website builder that allows users to create custom websites." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Vapor Cast" },
+      { property: "og:description", content: "Createify Your Way is a website builder that allows users to create custom websites." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Vapor Cast" },
+      { name: "twitter:description", content: "Createify Your Way is a website builder that allows users to create custom websites." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ce325b66-1574-4d17-9d30-37d1b553b64b/id-preview-adf7ca17--3bad5b4f-8365-41dd-b942-a2a3091b2f3e.lovable.app-1782858129148.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ce325b66-1574-4d17-9d30-37d1b553b64b/id-preview-adf7ca17--3bad5b4f-8365-41dd-b942-a2a3091b2f3e.lovable.app-1782858129148.png" },
     ],
     links: [
       {
