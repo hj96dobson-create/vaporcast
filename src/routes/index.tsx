@@ -83,7 +83,7 @@ const steps = [
 const testimonials = [
   {
     quote:
-      "We replaced a $40k/mo UGC budget with Vaporcast and shipped 200 ad variants in a week.",
+      "We replaced a £40k/mo UGC budget with Vaporcast and shipped 200 ad variants in a week.",
     name: "Maya Chen",
     role: "Head of Growth, Lumio",
   },
@@ -465,7 +465,7 @@ function Testimonials() {
 const tiers = [
   {
     name: "Starter",
-    price: "$0",
+    price: "£0",
     sub: "Try Vaporcast free",
     feats: ["3 videos / month", "720p export", "20+ avatars", "Watermark"],
     cta: "Start free",
@@ -473,7 +473,7 @@ const tiers = [
   },
   {
     name: "Creator",
-    price: "$49",
+    price: "£49",
     sub: "per month, billed monthly",
     feats: ["100 videos / month", "4K export", "All 300+ avatars", "29 languages", "No watermark"],
     cta: "Start 7-day trial",
