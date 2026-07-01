@@ -1,52 +1,66 @@
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
 export type Lead = {
   id: string;
   email: string;
   source: string;
-  createdAt: string; // ISO
+  createdAt: string;
 };
 
-// In-memory store. Works per worker instance; swap for a DB when ready.
-const g = globalThis as unknown as { __leads?: Lead[] };
-if (!g.__leads) g.__leads = [];
-
-export function addLead(input: { email: string; source?: string }): Lead {
-  const lead: Lead = {
-    id:
-      globalThis.crypto?.randomUUID?.() ??
-      `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
-    email: input.email,
-    source: input.source ?? "cta",
-    createdAt: new Date().toISOString(),
+function toLead(row: {
+  id: string;
+  email: string;
+  source: string;
+  created_at: string;
+}): Lead {
+  return {
+    id: row.id,
+    email: row.email,
+    source: row.source,
+    createdAt: row.created_at,
   };
-  g.__leads!.unshift(lead);
-  // Cap memory
-  if (g.__leads!.length > 5000) g.__leads!.length = 5000;
-  return lead;
 }
 
-export function listLeads(filters: {
+export async function addLead(input: {
+  email: string;
+  source?: string;
+}): Promise<Lead> {
+  const { data, error } = await supabaseAdmin
+    .from("leads")
+    .insert({ email: input.email, source: input.source ?? "cta" })
+    .select("id, email, source, created_at")
+    .single();
+  if (error) throw error;
+  return toLead(data);
+}
+
+export async function listLeads(filters: {
   q?: string;
   source?: string;
-  since?: string; // ISO date
+  since?: string;
   limit?: number;
-}): Lead[] {
-  const q = filters.q?.trim().toLowerCase();
-  const source = filters.source?.trim().toLowerCase();
-  const sinceMs = filters.since ? Date.parse(filters.since) : NaN;
+}): Promise<Lead[]> {
   const limit = Math.min(Math.max(filters.limit ?? 500, 1), 5000);
+  let query = supabaseAdmin
+    .from("leads")
+    .select("id, email, source, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
 
-  return g.__leads!
-    .filter((l) => {
-      if (q && !l.email.toLowerCase().includes(q)) return false;
-      if (source && source !== "all" && l.source.toLowerCase() !== source)
-        return false;
-      if (!Number.isNaN(sinceMs) && Date.parse(l.createdAt) < sinceMs)
-        return false;
-      return true;
-    })
-    .slice(0, limit);
-}
+  if (filters.q?.trim()) {
+    query = query.ilike("email", `%${filters.q.trim()}%`);
+  }
+  if (filters.source && filters.source.toLowerCase() !== "all") {
+    query = query.eq("source", filters.source);
+  }
+  if (filters.since) {
+    const sinceIso = new Date(filters.since).toISOString();
+    if (!Number.isNaN(Date.parse(sinceIso))) {
+      query = query.gte("created_at", sinceIso);
+    }
+  }
 
-export function distinctSources(): string[] {
-  return Array.from(new Set(g.__leads!.map((l) => l.source))).sort();
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data ?? []).map(toLead);
 }
