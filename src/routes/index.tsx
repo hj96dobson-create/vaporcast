@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useState, type FormEvent } from "react";
 import {
   Sparkles,
   Wand2,
@@ -548,6 +549,36 @@ function Pricing() {
 }
 
 function CTA() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (status === "loading") return;
+    setStatus("loading");
+    setMessage("");
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, source: "cta" }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setStatus("error");
+        setMessage(data.error ?? "Something went wrong. Please try again.");
+        return;
+      }
+      setStatus("success");
+      setMessage("You're on the list — check your inbox soon.");
+      setEmail("");
+    } catch {
+      setStatus("error");
+      setMessage("Network error. Please try again.");
+    }
+  }
+
   return (
     <section id="cta" className="px-6 py-28">
       <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] border bg-ink p-12 text-white shadow-glow md:p-20">
@@ -564,23 +595,44 @@ function CTA() {
             Join 80,000+ marketers, founders, and creators rendering with Vaporcast.
           </p>
           <form
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             className="mt-8 flex w-full max-w-md flex-col gap-2 sm:flex-row"
+            noValidate
           >
+            <label htmlFor="cta-email" className="sr-only">Email address</label>
             <input
+              id="cta-email"
               type="email"
               required
+              autoComplete="email"
+              maxLength={255}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={status === "loading"}
               placeholder="you@brand.com"
-              className="flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40"
+              className="flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/40 disabled:opacity-60"
             />
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-chrome px-6 py-3 text-sm font-medium text-ink transition hover:opacity-90"
+              disabled={status === "loading"}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-chrome px-6 py-3 text-sm font-medium text-ink transition hover:opacity-90 disabled:opacity-60"
             >
-              Start free <ArrowRight className="h-4 w-4" />
+              {status === "loading" ? "Joining…" : (<>Start free <ArrowRight className="h-4 w-4" /></>)}
             </button>
           </form>
-          <p className="mt-3 text-xs text-white/40">No credit card. 3 free renders.</p>
+          <p
+            role={status === "error" ? "alert" : "status"}
+            aria-live="polite"
+            className={`mt-3 text-xs ${
+              status === "success"
+                ? "text-cyan"
+                : status === "error"
+                  ? "text-destructive"
+                  : "text-white/40"
+            }`}
+          >
+            {message || "No credit card. 3 free renders."}
+          </p>
         </div>
       </div>
     </section>
