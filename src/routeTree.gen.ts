@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiLeadsRouteImport } from './routes/api/leads'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const ApiLeadsRoute = ApiLeadsRouteImport.update({
   path: '/api/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/api/leads': typeof ApiLeadsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/api/leads': typeof ApiLeadsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/api/leads': typeof ApiLeadsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/leads'
+  fullPaths: '/' | '/admin/leads' | '/api/leads'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/leads'
-  id: '__root__' | '/' | '/api/leads'
+  to: '/' | '/admin/leads' | '/api/leads'
+  id: '__root__' | '/' | '/admin/leads' | '/api/leads'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   ApiLeadsRoute: typeof ApiLeadsRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   ApiLeadsRoute: ApiLeadsRoute,
 }
 export const routeTree = rootRouteImport
