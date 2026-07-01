@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/leads")({
           );
         }
 
-        const lead = addLead({
+        const lead = await addLead({
           email: parsed.data.email,
           source: parsed.data.source ?? "cta",
         });
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/api/leads")({
         const format = url.searchParams.get("format");
         const limit = Number(url.searchParams.get("limit")) || undefined;
 
-        const rows = listLeads({ q, source, since, limit });
+        const rows = await listLeads({ q, source, since, limit });
 
         if (format === "csv") {
           return new Response(toCsv(rows), {

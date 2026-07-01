@@ -155,7 +155,7 @@ function LeadsAdmin() {
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground">
-          Leads are stored in the running server instance. Connect a database for persistence across deploys.
+          Leads are stored in the database and persist across deploys.
         </p>
       </div>
     </div>
