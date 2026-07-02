@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { checkIsAdminFn, listLeadsFn } from "@/lib/leads.functions";
 
 type Lead = {
   id: string;
@@ -8,7 +11,7 @@ type Lead = {
   createdAt: string;
 };
 
-export const Route = createFileRoute("/admin/leads")({
+export const Route = createFileRoute("/_authenticated/admin/leads")({
   head: () => ({
     meta: [
       { title: "Leads Admin — Vaporcast" },
@@ -19,7 +22,23 @@ export const Route = createFileRoute("/admin/leads")({
   component: LeadsAdmin,
 });
 
+function toCsv(rows: Lead[]) {
+  const header = ["id", "email", "source", "createdAt"];
+  const escape = (v: string) =>
+    /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  const lines = [header.join(",")];
+  for (const r of rows) {
+    lines.push([r.id, r.email, r.source, r.createdAt].map(escape).join(","));
+  }
+  return lines.join("\n");
+}
+
 function LeadsAdmin() {
+  const navigate = useNavigate();
+  const listLeads = useServerFn(listLeadsFn);
+  const checkIsAdmin = useServerFn(checkIsAdminFn);
+
+  const [authorized, setAuthorized] = useState<null | boolean>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,35 +47,97 @@ function LeadsAdmin() {
   const [source, setSource] = useState("all");
   const [since, setSince] = useState("");
 
-  const query = useMemo(() => {
-    const p = new URLSearchParams();
-    if (q.trim()) p.set("q", q.trim());
-    if (source && source !== "all") p.set("source", source);
-    if (since) p.set("since", new Date(since).toISOString());
-    return p.toString();
-  }, [q, source, since]);
+  useEffect(() => {
+    checkIsAdmin()
+      .then(({ isAdmin }) => setAuthorized(isAdmin))
+      .catch(() => setAuthorized(false));
+  }, [checkIsAdmin]);
+
+  const filters = useMemo(
+    () => ({
+      q: q.trim() || undefined,
+      source: source !== "all" ? source : undefined,
+      since: since ? new Date(since).toISOString() : undefined,
+    }),
+    [q, source, since],
+  );
 
   useEffect(() => {
-    const controller = new AbortController();
+    if (authorized !== true) return;
+    let cancelled = false;
     setLoading(true);
     setError(null);
-    fetch(`/api/leads?${query}`, { signal: controller.signal })
-      .then(async (r) => {
-        if (!r.ok) throw new Error(`Failed (${r.status})`);
-        return r.json();
+    listLeads({ data: filters })
+      .then((res) => {
+        if (!cancelled) setLeads(res.leads ?? []);
       })
-      .then((data: { leads: Lead[] }) => setLeads(data.leads ?? []))
-      .catch((e) => {
-        if (e.name !== "AbortError") setError(e.message ?? "Failed to load");
+      .catch((e: unknown) => {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
       })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
-  }, [query]);
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [authorized, filters, listLeads]);
 
   const sources = useMemo(
     () => Array.from(new Set(leads.map((l) => l.source))).sort(),
     [leads],
   );
+
+  const handleExport = useCallback(async () => {
+    try {
+      const res = await listLeads({ data: { ...filters, limit: 5000 } });
+      const blob = new Blob([toCsv(res.leads ?? [])], {
+        type: "text/csv;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `leads-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Export failed");
+    }
+  }, [filters, listLeads]);
+
+  const handleSignOut = useCallback(async () => {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  }, [navigate]);
+
+  if (authorized === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
+        Checking access…
+      </div>
+    );
+  }
+
+  if (authorized === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="max-w-md text-center">
+          <h1 className="text-2xl font-semibold">Admin access required</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Your account is signed in but does not have the admin role. Ask an
+            existing admin to grant you access.
+          </p>
+          <button
+            onClick={handleSignOut}
+            className="mt-6 inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-accent transition"
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -68,12 +149,20 @@ function LeadsAdmin() {
               {loading ? "Loading…" : `${leads.length} result${leads.length === 1 ? "" : "s"}`}
             </p>
           </div>
-          <a
-            href={`/api/leads?${query}${query ? "&" : ""}format=csv`}
-            className="inline-flex items-center rounded-md border border-border bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
-          >
-            Export CSV
-          </a>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExport}
+              className="inline-flex items-center rounded-md border border-border bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-accent transition"
+            >
+              Sign out
+            </button>
+          </div>
         </header>
 
         <div className="grid gap-3 sm:grid-cols-3 mb-6">
@@ -155,7 +244,8 @@ function LeadsAdmin() {
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground">
-          Leads are stored in the database and persist across deploys.
+          Restricted to accounts with the admin role. Grant access by inserting
+          a row into <code>user_roles</code> with role <code>admin</code>.
         </p>
       </div>
     </div>
