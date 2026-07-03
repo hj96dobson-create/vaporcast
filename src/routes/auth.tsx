@@ -28,6 +28,7 @@ function safeRedirect(target: string | undefined): string {
 
 function AuthPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { redirect } = Route.useSearch();
   const dest = safeRedirect(redirect);
 
@@ -35,14 +36,22 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: dest });
+    // Wait for Supabase to hydrate its session from storage before deciding
+    // whether to bounce an already-signed-in user to their destination.
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        navigate({ to: dest, replace: true });
+      } else {
+        setCheckingSession(false);
+      }
     });
   }, [dest, navigate]);
+
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
