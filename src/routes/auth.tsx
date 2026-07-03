@@ -62,7 +62,12 @@ function AuthPage() {
       if (mode === "sign-in") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: dest });
+        // Invalidate the router so _authenticated beforeLoad re-runs with the
+        // fresh session; without this the guard can still see the pre-login
+        // state and bounce us back to /auth.
+        await router.invalidate();
+        navigate({ to: dest, replace: true });
+
       } else {
         const { error } = await supabase.auth.signUp({
           email,
