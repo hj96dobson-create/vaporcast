@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+
 
 const searchSchema = z.object({
   redirect: z.string().optional(),
@@ -27,6 +28,7 @@ function safeRedirect(target: string | undefined): string {
 
 function AuthPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { redirect } = Route.useSearch();
   const dest = safeRedirect(redirect);
 
@@ -34,14 +36,22 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: dest });
+    // Wait for Supabase to hydrate its session from storage before deciding
+    // whether to bounce an already-signed-in user to their destination.
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        navigate({ to: dest, replace: true });
+      } else {
+        setCheckingSession(false);
+      }
     });
   }, [dest, navigate]);
+
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,7 +62,12 @@ function AuthPage() {
       if (mode === "sign-in") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: dest });
+        // Invalidate the router so _authenticated beforeLoad re-runs with the
+        // fresh session; without this the guard can still see the pre-login
+        // state and bounce us back to /auth.
+        await router.invalidate();
+        navigate({ to: dest, replace: true });
+
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -80,15 +95,26 @@ function AuthPage() {
       });
       if (result.error) throw new Error(result.error.message ?? "Google sign-in failed");
       if (result.redirected) return;
-      navigate({ to: dest });
+      await router.invalidate();
+      navigate({ to: dest, replace: true });
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google sign-in failed");
       setLoading(false);
     }
   }
 
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm">
+        Loading…
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4">
+
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-sm">
         <h1 className="text-2xl font-semibold tracking-tight">
           {mode === "sign-in" ? "Sign in" : "Create account"}
