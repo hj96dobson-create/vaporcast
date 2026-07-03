@@ -124,13 +124,13 @@ function RootComponent() {
     // identity changes so protected routes react to sign-in/out without a
     // manual refresh. Filter to identity events — TOKEN_REFRESHED and
     // INITIAL_SESSION fire frequently and would thrash the router/cache.
-    const { supabase } = require("@/integrations/supabase/client");
-    const { data } = supabase.auth.onAuthStateChange((event: string) => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => data.subscription.unsubscribe();
+
   }, [router, queryClient]);
 
   return (
