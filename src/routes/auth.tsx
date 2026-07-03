@@ -104,8 +104,17 @@ function AuthPage() {
     }
   }
 
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground text-sm">
+        Loading…
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground px-4">
+
       <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-sm">
         <h1 className="text-2xl font-semibold tracking-tight">
           {mode === "sign-in" ? "Sign in" : "Create account"}
