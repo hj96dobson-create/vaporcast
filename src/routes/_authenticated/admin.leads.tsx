@@ -118,33 +118,15 @@ function LeadsAdmin() {
     navigate({ to: "/auth" });
   }, [navigate]);
 
-  if (authorized === null) {
+  if (authorized !== true) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
-        Checking access…
+        Loading…
       </div>
     );
   }
 
-  if (authorized === false) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
-        <div className="max-w-md text-center">
-          <h1 className="text-2xl font-semibold">Admin access required</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Your account is signed in but does not have the admin role. Ask an
-            existing admin to grant you access.
-          </p>
-          <button
-            onClick={handleSignOut}
-            className="mt-6 inline-flex items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-accent transition"
-          >
-            Sign out
-          </button>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
