@@ -137,6 +137,8 @@ function AuthPage() {
       if (result.error) throw new Error(result.error.message ?? "Google sign-in failed");
       if (result.redirected) return;
       await router.invalidate();
+      const dest = resolveDest();
+      clearStoredRedirect();
       navigate({ to: dest, replace: true });
 
     } catch (err) {
