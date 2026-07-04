@@ -20,17 +20,42 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-function safeRedirect(target: string | undefined): string {
-  if (!target) return "/admin/leads";
-  if (target.startsWith("/") && !target.startsWith("//")) return target;
-  return "/admin/leads";
+const DEFAULT_DEST = "/dashboard";
+const REDIRECT_KEY = "postAuthRedirect";
+
+function safeRedirect(target: string | undefined | null): string | null {
+  if (!target) return null;
+  if (target.startsWith("/") && !target.startsWith("//") && !target.startsWith("/auth")) {
+    return target;
+  }
+  return null;
+}
+
+function readStoredRedirect(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return sessionStorage.getItem(REDIRECT_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredRedirect() {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(REDIRECT_KEY);
+  } catch {
+    // ignore
+  }
 }
 
 function AuthPage() {
   const navigate = useNavigate();
   const router = useRouter();
   const { redirect } = Route.useSearch();
-  const dest = safeRedirect(redirect);
+
+  const resolveDest = () =>
+    safeRedirect(redirect) ?? safeRedirect(readStoredRedirect()) ?? DEFAULT_DEST;
 
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [email, setEmail] = useState("");
@@ -41,16 +66,30 @@ function AuthPage() {
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
+    // Persist an explicit ?redirect= so OAuth round-trips (which drop search
+    // params when the provider returns to window.location.origin) can still
+    // restore the originally requested destination.
+    const safe = safeRedirect(redirect);
+    if (safe && typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(REDIRECT_KEY, safe);
+      } catch {
+        // ignore
+      }
+    }
     // Wait for Supabase to hydrate its session from storage before deciding
     // whether to bounce an already-signed-in user to their destination.
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
+        const dest = resolveDest();
+        clearStoredRedirect();
         navigate({ to: dest, replace: true });
       } else {
         setCheckingSession(false);
       }
     });
-  }, [dest, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [redirect, navigate]);
 
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -66,6 +105,8 @@ function AuthPage() {
         // fresh session; without this the guard can still see the pre-login
         // state and bounce us back to /auth.
         await router.invalidate();
+        const dest = resolveDest();
+        clearStoredRedirect();
         navigate({ to: dest, replace: true });
 
       } else {
@@ -96,6 +137,8 @@ function AuthPage() {
       if (result.error) throw new Error(result.error.message ?? "Google sign-in failed");
       if (result.redirected) return;
       await router.invalidate();
+      const dest = resolveDest();
+      clearStoredRedirect();
       navigate({ to: dest, replace: true });
 
     } catch (err) {
