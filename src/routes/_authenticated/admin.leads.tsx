@@ -49,9 +49,16 @@ function LeadsAdmin() {
 
   useEffect(() => {
     checkIsAdmin()
-      .then(({ isAdmin }) => setAuthorized(isAdmin))
-      .catch(() => setAuthorized(false));
-  }, [checkIsAdmin]);
+      .then(({ isAdmin }) => {
+        if (isAdmin) {
+          setAuthorized(true);
+        } else {
+          navigate({ to: "/", replace: true });
+        }
+      })
+      .catch(() => navigate({ to: "/", replace: true }));
+  }, [checkIsAdmin, navigate]);
+
 
   const filters = useMemo(
     () => ({
