@@ -20,7 +20,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const DEFAULT_DEST = "/dashboard";
+const DEFAULT_DEST = "/";
 const REDIRECT_KEY = "postAuthRedirect";
 
 function safeRedirect(target: string | undefined | null): string | null {
