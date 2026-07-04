@@ -105,6 +105,8 @@ function AuthPage() {
         // fresh session; without this the guard can still see the pre-login
         // state and bounce us back to /auth.
         await router.invalidate();
+        const dest = resolveDest();
+        clearStoredRedirect();
         navigate({ to: dest, replace: true });
 
       } else {
