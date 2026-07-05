@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ConfirmWaitlistRouteImport } from './routes/confirm-waitlist'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,8 +17,14 @@ import { Route as ApiWaitlistRouteImport } from './routes/api/waitlist'
 import { Route as ApiLeadsRouteImport } from './routes/api/leads'
 import { Route as ApiWaitlistTierRouteImport } from './routes/api/waitlist.tier'
 import { Route as ApiWaitlistConfirmRouteImport } from './routes/api/waitlist.confirm'
+import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin.waitlist'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 
+const ConfirmWaitlistRoute = ConfirmWaitlistRouteImport.update({
+  id: '/confirm-waitlist',
+  path: '/confirm-waitlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -52,6 +59,12 @@ const ApiWaitlistConfirmRoute = ApiWaitlistConfirmRouteImport.update({
   path: '/confirm',
   getParentRoute: () => ApiWaitlistRoute,
 } as any)
+const AuthenticatedAdminWaitlistRoute =
+  AuthenticatedAdminWaitlistRouteImport.update({
+    id: '/admin/waitlist',
+    path: '/admin/waitlist',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
   id: '/admin/leads',
   path: '/admin/leads',
@@ -61,18 +74,22 @@ const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/confirm-waitlist': typeof ConfirmWaitlistRoute
   '/api/leads': typeof ApiLeadsRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/confirm-waitlist': typeof ConfirmWaitlistRoute
   '/api/leads': typeof ApiLeadsRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
 }
@@ -81,9 +98,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/confirm-waitlist': typeof ConfirmWaitlistRoute
   '/api/leads': typeof ApiLeadsRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
 }
@@ -92,18 +111,22 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/confirm-waitlist'
     | '/api/leads'
     | '/api/waitlist'
     | '/admin/leads'
+    | '/admin/waitlist'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/confirm-waitlist'
     | '/api/leads'
     | '/api/waitlist'
     | '/admin/leads'
+    | '/admin/waitlist'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
   id:
@@ -111,9 +134,11 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/confirm-waitlist'
     | '/api/leads'
     | '/api/waitlist'
     | '/_authenticated/admin/leads'
+    | '/_authenticated/admin/waitlist'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
   fileRoutesById: FileRoutesById
@@ -122,12 +147,20 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ConfirmWaitlistRoute: typeof ConfirmWaitlistRoute
   ApiLeadsRoute: typeof ApiLeadsRoute
   ApiWaitlistRoute: typeof ApiWaitlistRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/confirm-waitlist': {
+      id: '/confirm-waitlist'
+      path: '/confirm-waitlist'
+      fullPath: '/confirm-waitlist'
+      preLoaderRoute: typeof ConfirmWaitlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -177,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWaitlistConfirmRouteImport
       parentRoute: typeof ApiWaitlistRoute
     }
+    '/_authenticated/admin/waitlist': {
+      id: '/_authenticated/admin/waitlist'
+      path: '/admin/waitlist'
+      fullPath: '/admin/waitlist'
+      preLoaderRoute: typeof AuthenticatedAdminWaitlistRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/leads': {
       id: '/_authenticated/admin/leads'
       path: '/admin/leads'
@@ -189,10 +229,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
+  AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
+  AuthenticatedAdminWaitlistRoute: AuthenticatedAdminWaitlistRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -216,6 +258,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ConfirmWaitlistRoute: ConfirmWaitlistRoute,
   ApiLeadsRoute: ApiLeadsRoute,
   ApiWaitlistRoute: ApiWaitlistRouteWithChildren,
 }

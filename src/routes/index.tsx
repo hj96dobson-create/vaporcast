@@ -19,6 +19,7 @@ import avatar1 from "@/assets/avatar-1.jpg";
 import avatar2 from "@/assets/avatar-2.jpg";
 import avatar3 from "@/assets/avatar-3.jpg";
 import avatar4 from "@/assets/avatar-4.jpg";
+import { WaitlistModal } from "@/components/WaitlistModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -116,6 +117,7 @@ function Landing() {
       <Pricing />
       <CTA />
       <Footer />
+      <WaitlistModal />
     </div>
   );
 }
