@@ -56,11 +56,66 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist: {
+        Row: {
+          confirmation_token: string | null
+          confirmed_at: string | null
+          created_at: string
+          discount_tier: string
+          email: string
+          email_normalized: string
+          id: string
+          is_founding_vip: boolean
+          rejection_reason: string | null
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          confirmation_token?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          discount_tier?: string
+          email: string
+          email_normalized: string
+          id?: string
+          is_founding_vip?: boolean
+          rejection_reason?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          confirmation_token?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          discount_tier?: string
+          email?: string
+          email_normalized?: string
+          id?: string
+          is_founding_vip?: boolean
+          rejection_reason?: string | null
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      confirm_waitlist: {
+        Args: { _token: string }
+        Returns: {
+          discount_tier: string
+          email: string
+          id: string
+          is_founding_vip: boolean
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
