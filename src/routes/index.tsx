@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
 import {
@@ -12,6 +12,8 @@ import {
   Play,
   Check,
   Zap,
+  LogOut,
+  LayoutDashboard,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
 import appPreview from "@/assets/app-preview.jpg";
@@ -20,6 +22,17 @@ import avatar2 from "@/assets/avatar-2.jpg";
 import avatar3 from "@/assets/avatar-3.jpg";
 import avatar4 from "@/assets/avatar-4.jpg";
 import { WaitlistModal } from "@/components/WaitlistModal";
+import { useSession } from "@/hooks/useSession";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -123,6 +136,16 @@ function Landing() {
 }
 
 function Nav() {
+  const { user, loading } = useSession();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.invalidate();
+  };
+
+  const initials = (user?.email ?? "?").slice(0, 2).toUpperCase();
+
   return (
     <header className="sticky top-0 z-50">
       <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between rounded-full glass px-5 py-3">
@@ -137,9 +160,32 @@ function Nav() {
           <a href="#pricing" className="hover:text-foreground transition">Pricing</a>
         </nav>
         <div className="flex items-center gap-2">
-          <Link to="/auth" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
-            Sign in
-          </Link>
+          {!loading && !user && (
+            <Link to="/auth" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
+              Sign in
+            </Link>
+          )}
+          {!loading && user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="focus:outline-none">
+                <Avatar className="h-8 w-8 border border-border">
+                  <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <a
             href="#cta"
             className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
