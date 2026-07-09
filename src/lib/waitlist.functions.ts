@@ -1,11 +1,7 @@
 import { createServerFn, createMiddleware } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  listWaitlist,
-  getWaitlistStats,
-  type WaitlistRow,
-} from "@/lib/waitlist-store.server";
+import { listWaitlist, getWaitlistStats, type WaitlistRow } from "@/lib/waitlist-store.server";
 
 const requireAdmin = createMiddleware({ type: "function" })
   .middleware([requireSupabaseAuth])

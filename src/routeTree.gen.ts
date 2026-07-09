@@ -9,17 +9,43 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConfirmWaitlistRouteImport } from './routes/confirm-waitlist'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardCreateRouteImport } from './routes/dashboard/create'
 import { Route as ApiWaitlistRouteImport } from './routes/api/waitlist'
-import { Route as ApiLeadsRouteImport } from './routes/api/leads'
+import { Route as AdminVideosRouteImport } from './routes/_admin/videos'
+import { Route as AdminUsersRouteImport } from './routes/_admin/users'
+import { Route as AdminTemplatesRouteImport } from './routes/_admin/templates'
+import { Route as AdminSupportRouteImport } from './routes/_admin/support'
+import { Route as AdminSettingsRouteImport } from './routes/_admin/settings'
+import { Route as AdminLogsRouteImport } from './routes/_admin/logs'
+import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
+import { Route as AdminBillingRouteImport } from './routes/_admin/billing'
+import { Route as AdminAvatarsRouteImport } from './routes/_admin/avatars'
+import { Route as AdminApiRouteImport } from './routes/_admin/api'
+import { Route as AdminAnalyticsRouteImport } from './routes/_admin/analytics'
 import { Route as ApiWaitlistTierRouteImport } from './routes/api/waitlist.tier'
 import { Route as ApiWaitlistConfirmRouteImport } from './routes/api/waitlist.confirm'
+import { Route as ApiVideoStatusRouteImport } from './routes/api/video/status'
+import { Route as ApiVideoGenerateRouteImport } from './routes/api/video/generate'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin.waitlist'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConfirmWaitlistRoute = ConfirmWaitlistRouteImport.update({
   id: '/confirm-waitlist',
   path: '/confirm-waitlist',
@@ -34,20 +60,79 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardCreateRoute = DashboardCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => DashboardRoute,
 } as any)
 const ApiWaitlistRoute = ApiWaitlistRouteImport.update({
   id: '/api/waitlist',
   path: '/api/waitlist',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiLeadsRoute = ApiLeadsRouteImport.update({
-  id: '/api/leads',
-  path: '/api/leads',
-  getParentRoute: () => rootRouteImport,
+const AdminVideosRoute = AdminVideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTemplatesRoute = AdminTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSupportRoute = AdminSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLogsRoute = AdminLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminBillingRoute = AdminBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAvatarsRoute = AdminAvatarsRouteImport.update({
+  id: '/avatars',
+  path: '/avatars',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminApiRoute = AdminApiRouteImport.update({
+  id: '/api',
+  path: '/api',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const ApiWaitlistTierRoute = ApiWaitlistTierRouteImport.update({
   id: '/tier',
@@ -58,6 +143,16 @@ const ApiWaitlistConfirmRoute = ApiWaitlistConfirmRouteImport.update({
   id: '/confirm',
   path: '/confirm',
   getParentRoute: () => ApiWaitlistRoute,
+} as any)
+const ApiVideoStatusRoute = ApiVideoStatusRouteImport.update({
+  id: '/api/video/status',
+  path: '/api/video/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiVideoGenerateRoute = ApiVideoGenerateRouteImport.update({
+  id: '/api/video/generate',
+  path: '/api/video/generate',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminWaitlistRoute =
   AuthenticatedAdminWaitlistRouteImport.update({
@@ -75,10 +170,24 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/confirm-waitlist': typeof ConfirmWaitlistRoute
-  '/api/leads': typeof ApiLeadsRoute
+  '/dashboard': typeof AdminDashboardRoute
+  '/profile': typeof ProfileRoute
+  '/analytics': typeof AdminAnalyticsRoute
+  '/api': typeof AdminApiRoute
+  '/avatars': typeof AdminAvatarsRoute
+  '/billing': typeof AdminBillingRoute
+  '/logs': typeof AdminLogsRoute
+  '/settings': typeof AdminSettingsRoute
+  '/support': typeof AdminSupportRoute
+  '/templates': typeof AdminTemplatesRoute
+  '/users': typeof AdminUsersRoute
+  '/videos': typeof AdminVideosRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
+  '/dashboard/create': typeof DashboardCreateRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/api/video/generate': typeof ApiVideoGenerateRoute
+  '/api/video/status': typeof ApiVideoStatusRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
 }
@@ -86,23 +195,53 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/confirm-waitlist': typeof ConfirmWaitlistRoute
-  '/api/leads': typeof ApiLeadsRoute
+  '/dashboard': typeof AdminDashboardRoute
+  '/profile': typeof ProfileRoute
+  '/analytics': typeof AdminAnalyticsRoute
+  '/api': typeof AdminApiRoute
+  '/avatars': typeof AdminAvatarsRoute
+  '/billing': typeof AdminBillingRoute
+  '/logs': typeof AdminLogsRoute
+  '/settings': typeof AdminSettingsRoute
+  '/support': typeof AdminSupportRoute
+  '/templates': typeof AdminTemplatesRoute
+  '/users': typeof AdminUsersRoute
+  '/videos': typeof AdminVideosRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
+  '/dashboard/create': typeof DashboardCreateRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/api/video/generate': typeof ApiVideoGenerateRoute
+  '/api/video/status': typeof ApiVideoStatusRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_admin': typeof AdminRouteRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/confirm-waitlist': typeof ConfirmWaitlistRoute
-  '/api/leads': typeof ApiLeadsRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/profile': typeof ProfileRoute
+  '/_admin/analytics': typeof AdminAnalyticsRoute
+  '/_admin/api': typeof AdminApiRoute
+  '/_admin/avatars': typeof AdminAvatarsRoute
+  '/_admin/billing': typeof AdminBillingRoute
+  '/_admin/dashboard': typeof AdminDashboardRoute
+  '/_admin/logs': typeof AdminLogsRoute
+  '/_admin/settings': typeof AdminSettingsRoute
+  '/_admin/support': typeof AdminSupportRoute
+  '/_admin/templates': typeof AdminTemplatesRoute
+  '/_admin/users': typeof AdminUsersRoute
+  '/_admin/videos': typeof AdminVideosRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
+  '/dashboard/create': typeof DashboardCreateRoute
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/api/video/generate': typeof ApiVideoGenerateRoute
+  '/api/video/status': typeof ApiVideoStatusRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
 }
@@ -112,10 +251,24 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/confirm-waitlist'
-    | '/api/leads'
+    | '/dashboard'
+    | '/profile'
+    | '/analytics'
+    | '/api'
+    | '/avatars'
+    | '/billing'
+    | '/logs'
+    | '/settings'
+    | '/support'
+    | '/templates'
+    | '/users'
+    | '/videos'
     | '/api/waitlist'
+    | '/dashboard/create'
     | '/admin/leads'
     | '/admin/waitlist'
+    | '/api/video/generate'
+    | '/api/video/status'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
   fileRoutesByTo: FileRoutesByTo
@@ -123,37 +276,85 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/confirm-waitlist'
-    | '/api/leads'
+    | '/dashboard'
+    | '/profile'
+    | '/analytics'
+    | '/api'
+    | '/avatars'
+    | '/billing'
+    | '/logs'
+    | '/settings'
+    | '/support'
+    | '/templates'
+    | '/users'
+    | '/videos'
     | '/api/waitlist'
+    | '/dashboard/create'
     | '/admin/leads'
     | '/admin/waitlist'
+    | '/api/video/generate'
+    | '/api/video/status'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
   id:
     | '__root__'
     | '/'
+    | '/_admin'
     | '/_authenticated'
     | '/auth'
     | '/confirm-waitlist'
-    | '/api/leads'
+    | '/dashboard'
+    | '/profile'
+    | '/_admin/analytics'
+    | '/_admin/api'
+    | '/_admin/avatars'
+    | '/_admin/billing'
+    | '/_admin/dashboard'
+    | '/_admin/logs'
+    | '/_admin/settings'
+    | '/_admin/support'
+    | '/_admin/templates'
+    | '/_admin/users'
+    | '/_admin/videos'
     | '/api/waitlist'
+    | '/dashboard/create'
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/waitlist'
+    | '/api/video/generate'
+    | '/api/video/status'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ConfirmWaitlistRoute: typeof ConfirmWaitlistRoute
-  ApiLeadsRoute: typeof ApiLeadsRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  ProfileRoute: typeof ProfileRoute
   ApiWaitlistRoute: typeof ApiWaitlistRouteWithChildren
+  ApiVideoGenerateRoute: typeof ApiVideoGenerateRoute
+  ApiVideoStatusRoute: typeof ApiVideoStatusRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/confirm-waitlist': {
       id: '/confirm-waitlist'
       path: '/confirm-waitlist'
@@ -175,12 +376,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin': {
+      id: '/_admin'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/create': {
+      id: '/dashboard/create'
+      path: '/create'
+      fullPath: '/dashboard/create'
+      preLoaderRoute: typeof DashboardCreateRouteImport
+      parentRoute: typeof DashboardRoute
     }
     '/api/waitlist': {
       id: '/api/waitlist'
@@ -189,12 +404,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWaitlistRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/leads': {
-      id: '/api/leads'
-      path: '/api/leads'
-      fullPath: '/api/leads'
-      preLoaderRoute: typeof ApiLeadsRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_admin/videos': {
+      id: '/_admin/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof AdminVideosRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/users': {
+      id: '/_admin/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/templates': {
+      id: '/_admin/templates'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof AdminTemplatesRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/support': {
+      id: '/_admin/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AdminSupportRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/settings': {
+      id: '/_admin/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/logs': {
+      id: '/_admin/logs'
+      path: '/logs'
+      fullPath: '/logs'
+      preLoaderRoute: typeof AdminLogsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/dashboard': {
+      id: '/_admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/billing': {
+      id: '/_admin/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof AdminBillingRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/avatars': {
+      id: '/_admin/avatars'
+      path: '/avatars'
+      fullPath: '/avatars'
+      preLoaderRoute: typeof AdminAvatarsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/api': {
+      id: '/_admin/api'
+      path: '/api'
+      fullPath: '/api'
+      preLoaderRoute: typeof AdminApiRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/_admin/analytics': {
+      id: '/_admin/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRouteRoute
     }
     '/api/waitlist/tier': {
       id: '/api/waitlist/tier'
@@ -209,6 +494,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/waitlist/confirm'
       preLoaderRoute: typeof ApiWaitlistConfirmRouteImport
       parentRoute: typeof ApiWaitlistRoute
+    }
+    '/api/video/status': {
+      id: '/api/video/status'
+      path: '/api/video/status'
+      fullPath: '/api/video/status'
+      preLoaderRoute: typeof ApiVideoStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/video/generate': {
+      id: '/api/video/generate'
+      path: '/api/video/generate'
+      fullPath: '/api/video/generate'
+      preLoaderRoute: typeof ApiVideoGenerateRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/waitlist': {
       id: '/_authenticated/admin/waitlist'
@@ -227,6 +526,38 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminApiRoute: typeof AdminApiRoute
+  AdminAvatarsRoute: typeof AdminAvatarsRoute
+  AdminBillingRoute: typeof AdminBillingRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLogsRoute: typeof AdminLogsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSupportRoute: typeof AdminSupportRoute
+  AdminTemplatesRoute: typeof AdminTemplatesRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminVideosRoute: typeof AdminVideosRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminApiRoute: AdminApiRoute,
+  AdminAvatarsRoute: AdminAvatarsRoute,
+  AdminBillingRoute: AdminBillingRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLogsRoute: AdminLogsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSupportRoute: AdminSupportRoute,
+  AdminTemplatesRoute: AdminTemplatesRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminVideosRoute: AdminVideosRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
@@ -239,6 +570,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface DashboardRouteChildren {
+  DashboardCreateRoute: typeof DashboardCreateRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCreateRoute: DashboardCreateRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 interface ApiWaitlistRouteChildren {
   ApiWaitlistConfirmRoute: typeof ApiWaitlistConfirmRoute
@@ -256,11 +599,15 @@ const ApiWaitlistRouteWithChildren = ApiWaitlistRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ConfirmWaitlistRoute: ConfirmWaitlistRoute,
-  ApiLeadsRoute: ApiLeadsRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  ProfileRoute: ProfileRoute,
   ApiWaitlistRoute: ApiWaitlistRouteWithChildren,
+  ApiVideoGenerateRoute: ApiVideoGenerateRoute,
+  ApiVideoStatusRoute: ApiVideoStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

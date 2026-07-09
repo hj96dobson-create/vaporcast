@@ -13,7 +13,6 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 
-
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -80,13 +79,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Vaporcast — AI Video Ads in Minutes" },
-      { name: "description", content: "Turn a single prompt into studio-grade video ads with lifelike AI avatars, voices, and scripts. Ship campaigns 10× faster." },
+      {
+        name: "description",
+        content:
+          "Turn a single prompt into studio-grade video ads with lifelike AI avatars, voices, and scripts. Ship campaigns 10× faster.",
+      },
       { property: "og:title", content: "Vaporcast — AI Video Ads in Minutes" },
-      { property: "og:description", content: "Turn a single prompt into studio-grade video ads with lifelike AI avatars, voices, and scripts." },
+      {
+        property: "og:description",
+        content:
+          "Turn a single prompt into studio-grade video ads with lifelike AI avatars, voices, and scripts.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Vaporcast — AI Video Ads in Minutes" },
-      { name: "twitter:description", content: "Turn a single prompt into studio-grade video ads with lifelike AI avatars, voices, and scripts." },
+      {
+        name: "twitter:description",
+        content:
+          "Turn a single prompt into studio-grade video ads with lifelike AI avatars, voices, and scripts.",
+      },
     ],
     links: [
       {
@@ -130,7 +141,6 @@ function RootComponent() {
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => data.subscription.unsubscribe();
-
   }, [router, queryClient]);
 
   return (
@@ -140,4 +150,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-

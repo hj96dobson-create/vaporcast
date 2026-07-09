@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState, type FormEvent } from "react";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import {
   Sparkles,
   Wand2,
@@ -97,20 +98,17 @@ const steps = [
 
 const testimonials = [
   {
-    quote:
-      "We replaced a £40k/mo UGC budget with Vaporcast and shipped 200 ad variants in a week.",
+    quote: "We replaced a £40k/mo UGC budget with Vaporcast and shipped 200 ad variants in a week.",
     name: "Maya Chen",
     role: "Head of Growth, Lumio",
   },
   {
-    quote:
-      "It's the first AI video tool where the avatars don't feel uncanny. Our CTR jumped 38%.",
+    quote: "It's the first AI video tool where the avatars don't feel uncanny. Our CTR jumped 38%.",
     name: "Daniel Park",
     role: "Founder, Northpeak",
   },
   {
-    quote:
-      "From script to multilingual launch in an afternoon. This is the new creative pipeline.",
+    quote: "From script to multilingual launch in an afternoon. This is the new creative pipeline.",
     name: "Sofia Reyes",
     role: "Creative Director, Halo",
   },
@@ -137,6 +135,7 @@ function Landing() {
 
 function Nav() {
   const { user, loading } = useSession();
+  const { profile } = useUserProfile();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -144,7 +143,7 @@ function Nav() {
     router.invalidate();
   };
 
-  const initials = (user?.email ?? "?").slice(0, 2).toUpperCase();
+  const initials = (profile?.username ?? user?.email ?? "?").slice(0, 2).toUpperCase();
 
   return (
     <header className="sticky top-0 z-50">
@@ -154,14 +153,25 @@ function Nav() {
           Vaporcast
         </a>
         <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-          <a href="#features" className="hover:text-foreground transition">Features</a>
-          <a href="#how" className="hover:text-foreground transition">How it works</a>
-          <a href="#avatars" className="hover:text-foreground transition">Avatars</a>
-          <a href="#pricing" className="hover:text-foreground transition">Pricing</a>
+          <a href="#features" className="hover:text-foreground transition">
+            Features
+          </a>
+          <a href="#how" className="hover:text-foreground transition">
+            How it works
+          </a>
+          <a href="#avatars" className="hover:text-foreground transition">
+            Avatars
+          </a>
+          <a href="#pricing" className="hover:text-foreground transition">
+            Pricing
+          </a>
         </nav>
         <div className="flex items-center gap-2">
           {!loading && !user && (
-            <Link to="/auth" className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline">
+            <Link
+              to="/auth"
+              className="hidden text-sm text-muted-foreground hover:text-foreground sm:inline"
+            >
               Sign in
             </Link>
           )}
@@ -173,11 +183,18 @@ function Nav() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
+                <DropdownMenuLabel className="truncate">
+                  {profile?.username ?? user.email ?? user.id}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard">
                     <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    <LayoutDashboard className="mr-2 h-4 w-4" /> Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={handleSignOut}>
@@ -228,7 +245,8 @@ function Hero() {
           className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight md:text-7xl"
         >
           Studio-grade <span className="text-gradient">video ads</span>
-          <br />from a single prompt.
+          <br />
+          from a single prompt.
         </motion.h1>
 
         <motion.p
@@ -237,8 +255,8 @@ function Hero() {
           transition={{ duration: 0.7, delay: 0.15 }}
           className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
         >
-          Vaporcast turns a link or idea into scripted, voiced, and rendered videos
-          with lifelike AI avatars — in 29 languages, ready to ship in minutes.
+          Vaporcast turns a link or idea into scripted, voiced, and rendered videos with lifelike AI
+          avatars — in 29 languages, ready to ship in minutes.
         </motion.p>
 
         <motion.div
@@ -307,6 +325,23 @@ function Logos() {
 }
 
 function Features() {
+  const router = useRouter();
+  const { user, loading } = useSession();
+
+  function handleFeatureClick(feature: (typeof features)[number]) {
+    if (!user && !loading) {
+      return router.navigate({ to: "/auth" });
+    }
+
+    router.navigate({
+      to: "/dashboard/create",
+      search: {
+        featureTitle: feature.title,
+        featureDescription: feature.body,
+      },
+    });
+  }
+
   return (
     <section id="features" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
@@ -322,16 +357,18 @@ function Features() {
 
         <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border bg-border md:grid-cols-3">
           {features.map((f) => (
-            <div
+            <button
               key={f.title}
-              className="group relative bg-card p-8 transition hover:bg-secondary/50"
+              type="button"
+              onClick={() => handleFeatureClick(f)}
+              className="group relative bg-card p-8 text-left transition duration-300 hover:-translate-y-1 hover:shadow-lg hover:border hover:border-white/10 hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-indigo/40"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-vapor shadow-glow">
                 <f.icon className="h-5 w-5 text-ink" />
               </div>
               <h3 className="mt-5 text-lg font-semibold">{f.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{f.body}</p>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -351,8 +388,8 @@ function Showcase() {
               <em className="not-italic text-gradient">post</em> in under 4 minutes.
             </h2>
             <p className="mt-5 text-muted-foreground">
-              Generate hooks, B-roll, captions, and a finished MP4 ready for any feed.
-              Every render is brand-aware and editable scene by scene.
+              Generate hooks, B-roll, captions, and a finished MP4 ready for any feed. Every render
+              is brand-aware and editable scene by scene.
             </p>
             <ul className="mt-6 space-y-3 text-sm">
               {[
@@ -553,9 +590,7 @@ function Pricing() {
             <div
               key={t.name}
               className={`relative rounded-3xl border p-8 shadow-soft ${
-                t.highlight
-                  ? "border-transparent bg-ink text-white"
-                  : "bg-card"
+                t.highlight ? "border-transparent bg-ink text-white" : "bg-card"
               }`}
             >
               {t.highlight && (
@@ -567,7 +602,9 @@ function Pricing() {
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="font-display text-5xl font-semibold">{t.price}</span>
               </div>
-              <p className={`mt-1 text-sm ${t.highlight ? "text-white/60" : "text-muted-foreground"}`}>
+              <p
+                className={`mt-1 text-sm ${t.highlight ? "text-white/60" : "text-muted-foreground"}`}
+              >
                 {t.sub}
               </p>
               <ul className="mt-6 space-y-3 text-sm">
@@ -647,7 +684,9 @@ function CTA() {
             className="mt-8 flex w-full max-w-md flex-col gap-2 sm:flex-row"
             noValidate
           >
-            <label htmlFor="cta-email" className="sr-only">Email address</label>
+            <label htmlFor="cta-email" className="sr-only">
+              Email address
+            </label>
             <input
               id="cta-email"
               type="email"
@@ -665,7 +704,13 @@ function CTA() {
               disabled={status === "loading"}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-chrome px-6 py-3 text-sm font-medium text-ink transition hover:opacity-90 disabled:opacity-60"
             >
-              {status === "loading" ? "Joining…" : (<>Start free <ArrowRight className="h-4 w-4" /></>)}
+              {status === "loading" ? (
+                "Joining…"
+              ) : (
+                <>
+                  Start free <ArrowRight className="h-4 w-4" />
+                </>
+              )}
             </button>
           </form>
           <p
@@ -697,9 +742,15 @@ function Footer() {
           <span>© {new Date().getFullYear()}</span>
         </div>
         <div className="flex gap-6">
-          <a href="#" className="hover:text-foreground">Privacy</a>
-          <a href="#" className="hover:text-foreground">Terms</a>
-          <a href="#" className="hover:text-foreground">Contact</a>
+          <a href="#" className="hover:text-foreground">
+            Privacy
+          </a>
+          <a href="#" className="hover:text-foreground">
+            Terms
+          </a>
+          <a href="#" className="hover:text-foreground">
+            Contact
+          </a>
         </div>
       </div>
     </footer>

@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Crown, Ban } from "lucide-react";
-import { checkIsAdminFn } from "@/lib/leads.functions";
 import { getWaitlistStatsFn, listWaitlistFn } from "@/lib/waitlist.functions";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 type Row = {
   id: string;
@@ -29,11 +29,10 @@ export const Route = createFileRoute("/_authenticated/admin/waitlist")({
 
 function WaitlistAdmin() {
   const navigate = useNavigate();
-  const checkIsAdmin = useServerFn(checkIsAdminFn);
   const listWaitlist = useServerFn(listWaitlistFn);
   const getStats = useServerFn(getWaitlistStatsFn);
+  const { isAdmin, loading: authLoading } = useAuthUser();
 
-  const [authorized, setAuthorized] = useState<null | boolean>(null);
   const [rows, setRows] = useState<Row[]>([]);
   const [stats, setStats] = useState<{
     total: number;
@@ -50,14 +49,14 @@ function WaitlistAdmin() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [tierFilter, setTierFilter] = useState("all");
 
+  const canRenderProtectedContent = !authLoading && isAdmin;
+
   useEffect(() => {
-    checkIsAdmin()
-      .then(({ isAdmin }) => {
-        if (isAdmin) setAuthorized(true);
-        else navigate({ to: "/", replace: true });
-      })
-      .catch(() => navigate({ to: "/", replace: true }));
-  }, [checkIsAdmin, navigate]);
+    if (authLoading) return;
+    if (!isAdmin) {
+      navigate({ to: "/", replace: true });
+    }
+  }, [authLoading, isAdmin, navigate]);
 
   const filters = useMemo(
     () => ({
@@ -69,7 +68,7 @@ function WaitlistAdmin() {
   );
 
   const load = useCallback(() => {
-    if (authorized !== true) return;
+    if (!isAdmin || authLoading) return;
     setLoading(true);
     setError(null);
     Promise.all([listWaitlist({ data: filters }), getStats()])
@@ -77,17 +76,15 @@ function WaitlistAdmin() {
         setRows((list.rows ?? []) as Row[]);
         setStats(s);
       })
-      .catch((e: unknown) =>
-        setError(e instanceof Error ? e.message : "Failed to load"),
-      )
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : "Failed to load"))
       .finally(() => setLoading(false));
-  }, [authorized, filters, listWaitlist, getStats]);
+  }, [authLoading, isAdmin, filters, listWaitlist, getStats]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  if (authorized !== true) {
+  if (!canRenderProtectedContent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
         Loading…
@@ -100,9 +97,7 @@ function WaitlistAdmin() {
       <div className="mx-auto max-w-6xl px-6 py-10">
         <header className="mb-8 flex items-end justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Waitlist Management
-            </h1>
+            <h1 className="text-3xl font-semibold tracking-tight">Waitlist Management</h1>
             <p className="text-sm text-muted-foreground mt-1">
               Confirmed users become VIPs for the first 10 spots, then standard.
             </p>
@@ -131,10 +126,7 @@ function WaitlistAdmin() {
             { label: "VIP", value: stats?.vip ?? "—" },
             { label: "Rejected", value: stats?.rejected ?? "—" },
           ].map((s) => (
-            <div
-              key={s.label}
-              className="rounded-lg border border-border bg-card p-4"
-            >
+            <div key={s.label} className="rounded-lg border border-border bg-card p-4">
               <div className="text-xs uppercase tracking-wider text-muted-foreground">
                 {s.label}
               </div>
@@ -204,10 +196,7 @@ function WaitlistAdmin() {
             <tbody>
               {rows.length === 0 && !loading ? (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="px-4 py-10 text-center text-muted-foreground"
-                  >
+                  <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
                     No waitlist entries match your filters.
                   </td>
                 </tr>

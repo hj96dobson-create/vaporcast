@@ -16,18 +16,13 @@ export function WaitlistModal() {
   const [open, setOpen] = useState(false);
   const [tier, setTier] = useState<TierStatus | null>(null);
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      if (
-        sessionStorage.getItem(STORAGE_KEY) === "1" ||
-        localStorage.getItem(SIGNUP_KEY) === "1"
-      )
+      if (sessionStorage.getItem(STORAGE_KEY) === "1" || localStorage.getItem(SIGNUP_KEY) === "1")
         return;
     } catch {
       /* ignore storage errors */
@@ -82,8 +77,7 @@ export function WaitlistModal() {
       }
       setStatus("success");
       setMessage(
-        data.message ??
-          "Check your inbox — we sent a confirmation link to secure your spot.",
+        data.message ?? "Check your inbox — we sent a confirmation link to secure your spot.",
       );
       try {
         localStorage.setItem(SIGNUP_KEY, "1");
@@ -138,18 +132,13 @@ export function WaitlistModal() {
               <Crown className="h-3.5 w-3.5" />
               Founding VIP · {tier ? tier.vipSpotsLeft : VIP_CAP} spots left
             </div>
-            <h2
-              id="waitlist-modal-title"
-              className="mt-4 text-2xl font-semibold tracking-tight"
-            >
+            <h2 id="waitlist-modal-title" className="mt-4 text-2xl font-semibold tracking-tight">
               🔥 Founding VIP Members
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               The first 10 confirmed users receive{" "}
-              <strong className="text-foreground">
-                50% off any plan for 6 months
-              </strong>{" "}
-              after launch.
+              <strong className="text-foreground">50% off any plan for 6 months</strong> after
+              launch.
             </p>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
               {[
@@ -171,15 +160,11 @@ export function WaitlistModal() {
               <Sparkles className="h-3.5 w-3.5" />
               Early access
             </div>
-            <h2
-              id="waitlist-modal-title"
-              className="mt-4 text-2xl font-semibold tracking-tight"
-            >
+            <h2 id="waitlist-modal-title" className="mt-4 text-2xl font-semibold tracking-tight">
               Join the waitlist
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Get early access and{" "}
-              <strong className="text-foreground">10% off any plan</strong>{" "}
+              Get early access and <strong className="text-foreground">10% off any plan</strong>{" "}
               after launch.
             </p>
           </>

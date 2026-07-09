@@ -7,12 +7,7 @@ export type Lead = {
   createdAt: string;
 };
 
-function toLead(row: {
-  id: string;
-  email: string;
-  source: string;
-  created_at: string;
-}): Lead {
+function toLead(row: { id: string; email: string; source: string; created_at: string }): Lead {
   return {
     id: row.id,
     email: row.email,
@@ -21,10 +16,7 @@ function toLead(row: {
   };
 }
 
-export async function addLead(input: {
-  email: string;
-  source?: string;
-}): Promise<Lead> {
+export async function addLead(input: { email: string; source?: string }): Promise<Lead> {
   const { data, error } = await supabaseAdmin
     .from("leads")
     .insert({ email: input.email, source: input.source ?? "cta" })

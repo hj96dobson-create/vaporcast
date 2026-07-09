@@ -61,15 +61,13 @@ export async function confirmByToken(token: string) {
   });
   if (error) throw error;
   const row = Array.isArray(data) ? data[0] : data;
-  return (row ?? null) as
-    | {
-        id: string;
-        email: string;
-        status: "pending" | "confirmed" | "rejected";
-        is_founding_vip: boolean;
-        discount_tier: "vip" | "standard";
-      }
-    | null;
+  return (row ?? null) as {
+    id: string;
+    email: string;
+    status: "pending" | "confirmed" | "rejected";
+    is_founding_vip: boolean;
+    discount_tier: "vip" | "standard";
+  } | null;
 }
 
 export async function listWaitlist(filters: {
@@ -85,10 +83,8 @@ export async function listWaitlist(filters: {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (filters.q?.trim()) query = query.ilike("email", `%${filters.q.trim()}%`);
-  if (filters.status && filters.status !== "all")
-    query = query.eq("status", filters.status);
-  if (filters.tier && filters.tier !== "all")
-    query = query.eq("discount_tier", filters.tier);
+  if (filters.status && filters.status !== "all") query = query.eq("status", filters.status);
+  if (filters.tier && filters.tier !== "all") query = query.eq("discount_tier", filters.tier);
   const { data, error } = await query;
   if (error) throw error;
   return (data ?? []) as WaitlistRow[];

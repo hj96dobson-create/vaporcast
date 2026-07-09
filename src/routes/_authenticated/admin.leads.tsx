@@ -2,7 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { checkIsAdminFn, listLeadsFn } from "@/lib/leads.functions";
+import { listLeadsFn } from "@/lib/leads.functions";
+import { useAuthUser } from "@/hooks/useAuthUser";
 
 type Lead = {
   id: string;
@@ -24,8 +25,7 @@ export const Route = createFileRoute("/_authenticated/admin/leads")({
 
 function toCsv(rows: Lead[]) {
   const header = ["id", "email", "source", "createdAt"];
-  const escape = (v: string) =>
-    /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  const escape = (v: string) => (/[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
   const lines = [header.join(",")];
   for (const r of rows) {
     lines.push([r.id, r.email, r.source, r.createdAt].map(escape).join(","));
@@ -36,9 +36,8 @@ function toCsv(rows: Lead[]) {
 function LeadsAdmin() {
   const navigate = useNavigate();
   const listLeads = useServerFn(listLeadsFn);
-  const checkIsAdmin = useServerFn(checkIsAdminFn);
+  const { isAdmin, loading: authLoading } = useAuthUser();
 
-  const [authorized, setAuthorized] = useState<null | boolean>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,18 +46,14 @@ function LeadsAdmin() {
   const [source, setSource] = useState("all");
   const [since, setSince] = useState("");
 
-  useEffect(() => {
-    checkIsAdmin()
-      .then(({ isAdmin }) => {
-        if (isAdmin) {
-          setAuthorized(true);
-        } else {
-          navigate({ to: "/", replace: true });
-        }
-      })
-      .catch(() => navigate({ to: "/", replace: true }));
-  }, [checkIsAdmin, navigate]);
+  const canRenderProtectedContent = !authLoading && isAdmin;
 
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAdmin) {
+      navigate({ to: "/", replace: true });
+    }
+  }, [authLoading, isAdmin, navigate]);
 
   const filters = useMemo(
     () => ({
@@ -70,7 +65,7 @@ function LeadsAdmin() {
   );
 
   useEffect(() => {
-    if (authorized !== true) return;
+    if (!isAdmin || authLoading) return;
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -87,12 +82,9 @@ function LeadsAdmin() {
     return () => {
       cancelled = true;
     };
-  }, [authorized, filters, listLeads]);
+  }, [authLoading, isAdmin, filters, listLeads]);
 
-  const sources = useMemo(
-    () => Array.from(new Set(leads.map((l) => l.source))).sort(),
-    [leads],
-  );
+  const sources = useMemo(() => Array.from(new Set(leads.map((l) => l.source))).sort(), [leads]);
 
   const handleExport = useCallback(async () => {
     try {
@@ -118,15 +110,13 @@ function LeadsAdmin() {
     navigate({ to: "/auth" });
   }, [navigate]);
 
-  if (authorized !== true) {
+  if (!canRenderProtectedContent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
         Loading…
       </div>
     );
   }
-
-
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -192,7 +182,10 @@ function LeadsAdmin() {
         </div>
 
         {error && (
-          <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 text-destructive px-4 py-3 mb-4 text-sm">
+          <div
+            role="alert"
+            className="rounded-md border border-destructive/40 bg-destructive/10 text-destructive px-4 py-3 mb-4 text-sm"
+          >
             {error}
           </div>
         )}
@@ -233,8 +226,8 @@ function LeadsAdmin() {
         </div>
 
         <p className="mt-6 text-xs text-muted-foreground">
-          Restricted to accounts with the admin role. Grant access by inserting
-          a row into <code>user_roles</code> with role <code>admin</code>.
+          Restricted to accounts with the admin role. Grant access by inserting a row into{" "}
+          <code>user_roles</code> with role <code>admin</code>.
         </p>
       </div>
     </div>

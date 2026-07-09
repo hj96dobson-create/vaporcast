@@ -58,8 +58,6 @@ export async function sendWaitlistConfirmationEmail(input: {
 
   // Fallback: log the confirmation URL so it can be delivered manually until
   // the email domain / infrastructure is finished setting up.
-  console.log(
-    `[waitlist-email:FALLBACK] to=${to} confirm_url=${confirmationUrl}`,
-  );
+  console.log(`[waitlist-email:FALLBACK] to=${to} confirm_url=${confirmationUrl}`);
   return { ok: true, delivery: "logged" as const };
 }
