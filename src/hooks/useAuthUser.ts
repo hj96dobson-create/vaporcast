@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseClientReady } from "@/integrations/supabase/client";
 
 export function useAuthUser() {
   const [session, setSession] = useState<Session | null>(null);
@@ -9,6 +9,14 @@ export function useAuthUser() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabaseClientReady) {
+      setSession(null);
+      setUser(null);
+      setIsAdmin(false);
+      setLoading(false);
+      return;
+    }
+
     let mounted = true;
 
     const syncAuthState = async (nextSession: Session | null) => {

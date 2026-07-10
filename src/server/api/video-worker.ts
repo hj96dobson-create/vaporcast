@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { generateRunwayVideo, getRunwayVideoStatus } from "@/server/services/runway";
+import { getVideoAvatarById } from "@/lib/video-avatars";
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -8,11 +9,12 @@ function sleep(ms: number) {
 export async function processVideoJob(jobId: string) {
   const { data: job, error } = await supabaseAdmin
     .from("video_jobs")
-    .select("status,prompt,video_url")
+    .select("status,prompt,video_url,avatar_key")
     .eq("id", jobId)
     .single();
 
   if (error || !job) {
+    console.error("[video-worker] render lookup failed", error);
     return;
   }
 
@@ -25,40 +27,46 @@ export async function processVideoJob(jobId: string) {
   }
 
   let taskId: string;
+  const avatar = getVideoAvatarById(job.avatar_key);
+  const runwayPrompt = `Avatar: ${avatar.name} (${avatar.role})\n${job.prompt}`;
+
   try {
-    taskId = await generateRunwayVideo(job.prompt);
+    taskId = await generateRunwayVideo(runwayPrompt);
   } catch (error) {
     console.error("[video-worker] runway generate failed", jobId, error);
+
     await supabaseAdmin
       .from("video_jobs")
-      .update({ status: "failed", video_url: null })
+      .update({
+        status: "failed",
+        video_url: null,
+      })
       .eq("id", jobId);
+
     return;
   }
 
   const MAX_POLL_ATTEMPTS = 120;
   let attempts = 0;
+
   let finalStatus: "complete" | "failed" = "failed";
   let videoUrl: string | undefined;
 
   while (attempts < MAX_POLL_ATTEMPTS) {
-    attempts += 1;
+    attempts++;
 
     try {
-      const statusResult = await getRunwayVideoStatus(taskId);
+      const statusResult = (await getRunwayVideoStatus(taskId)) as
+        | { status: "processing"; videoUrl?: string }
+        | { status: "complete"; videoUrl?: string }
+        | { status: "failed"; videoUrl?: string };
+
       if (statusResult.status === "complete") {
         if (statusResult.videoUrl) {
           finalStatus = "complete";
           videoUrl = statusResult.videoUrl;
-        } else {
-          console.error(
-            "[video-worker] runway succeeded without a video URL",
-            jobId,
-            taskId,
-            statusResult.raw,
-          );
-          finalStatus = "failed";
         }
+
         break;
       }
 
@@ -67,11 +75,11 @@ export async function processVideoJob(jobId: string) {
         break;
       }
     } catch (error) {
-      console.error("[video-worker] runway status fetch failed", jobId, taskId, error);
+      console.error("[video-worker] runway status failed", jobId, taskId, error);
     }
 
     if (attempts >= MAX_POLL_ATTEMPTS) {
-      console.error("[video-worker] runway polling timed out", jobId, taskId, attempts);
+      console.error("[video-worker] runway polling timeout", jobId, taskId);
       break;
     }
 
@@ -87,7 +95,7 @@ export async function processVideoJob(jobId: string) {
     .eq("id", jobId);
 
   if (updateError) {
-    console.error("[video-worker] failed to update job", jobId, updateError);
+    console.error("[video-worker] render update failed", jobId, updateError);
   }
 }
 

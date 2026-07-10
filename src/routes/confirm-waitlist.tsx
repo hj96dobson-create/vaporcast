@@ -46,11 +46,13 @@ function ConfirmPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-6 py-16">
-      <div className="max-w-md w-full rounded-3xl border bg-card p-10 shadow-soft text-center">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-16 text-foreground">
+      <div className="orb -left-16 top-10 h-72 w-72 bg-indigo/20" />
+      <div className="orb right-0 top-1/3 h-80 w-80 bg-cyan/20" />
+      <div className="premium-panel relative w-full max-w-md p-10 text-center">
         {status === "loading" && (
           <>
-            <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground" />
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-slate-500" />
             <p className="mt-4 text-sm text-muted-foreground">Confirming your email…</p>
           </>
         )}
@@ -108,7 +110,7 @@ function ConfirmPage() {
 
         <Link
           to="/"
-          className="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+          className="mt-8 inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
         >
           Back to Vaporcast
         </Link>

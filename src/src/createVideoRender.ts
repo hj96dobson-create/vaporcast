@@ -4,7 +4,7 @@ import { generateRunwayVideo, pollRunwayTask } from "@/server/runway";
 export async function createVideoRender(userId: string, prompt: string) {
   // 1. Save job in database
   const { data: render } = await supabase
-    .from("renders")
+    .from("video_jobs")
     .insert({
       user_id: userId,
       prompt,
@@ -21,9 +21,9 @@ export async function createVideoRender(userId: string, prompt: string) {
 
   // 4. Save result
   await supabase
-    .from("renders")
+    .from("video_jobs")
     .update({
-      status: "done",
+      status: "complete",
       video_url: videoUrl,
     })
     .eq("id", render.id);

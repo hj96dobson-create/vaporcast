@@ -25,7 +25,7 @@ const filtersSchema = z.object({
 
 export const listWaitlistFn = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .inputValidator((data: unknown) => filtersSchema.parse(data ?? {}))
+  .validator((data: unknown) => filtersSchema.parse(data ?? {}))
   .handler(async ({ data }): Promise<{ rows: WaitlistRow[] }> => {
     const rows = await listWaitlist(data);
     return { rows };

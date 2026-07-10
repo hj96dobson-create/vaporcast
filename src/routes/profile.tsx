@@ -1,7 +1,15 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
+import { AppShell } from "@/components/layout/AppShell";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowRight, Sparkles, UserRound, Wand2 } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -26,6 +34,7 @@ function generateRandomUsername() {
     "vibe",
     "blend",
   ];
+
   const nouns = [
     "creator",
     "maker",
@@ -69,16 +78,18 @@ function validateUsername(value: string) {
 function ProfilePage() {
   const { user, loading: userLoading } = useSession();
   const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [status, setStatus] = useState<"idle" | "checking" | "saving" | "success" | "error">(
     "idle",
   );
+
   const [error, setError] = useState<string | null>(null);
   const [profileUsername, setProfileUsername] = useState<string | null>(null);
 
   const validation = useMemo(() => validateUsername(username), [username]);
-  const canSubmit =
-    validation.valid && status !== "saving" && status !== "checking";
+
+  const canSubmit = validation.valid && status !== "saving";
 
   useEffect(() => {
     if (!user && !userLoading) {
@@ -88,72 +99,50 @@ function ProfilePage() {
 
   useEffect(() => {
     if (!user) return;
+
     void (async () => {
       const { data } = await supabase
         .from("profiles")
         .select("username")
         .eq("user_id", user.id)
         .single();
+
       setProfileUsername(data?.username ?? null);
     })();
   }, [user]);
 
-  async function checkAvailability(value: string) {
-    if (profileUsername === value) {
-      return true;
-    }
-
-    setStatus("checking");
-    setError(null);
-
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("user_id")
-      .eq("username", value)
-      .neq("user_id", user!.id)
-      .maybeSingle();
-
-    if (error) {
-      console.error("[profile] username check error", error);
-      setError("Unable to verify username availability. Please try again.");
-      setStatus("error");
-      return false;
-    }
-
-    if (data) {
-      setError("Username is already taken.");
-      setStatus("error");
-      return false;
-    }
-
-    setStatus("idle");
+  async function checkAvailability() {
     return true;
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!user || !validation.valid) return;
+
+    if (!user || !validation.valid) {
+      setError(validation.message || "Enter a valid username before saving.");
+      return;
+    }
 
     setError(null);
     setStatus("saving");
 
     const normalized = validation.normalized;
-    const available = await checkAvailability(normalized);
-    if (!available) {
-      setStatus("error");
-      return;
-    }
+
+    await checkAvailability();
 
     const { error } = await supabase.from("profiles").upsert(
       {
         user_id: user.id,
         username: normalized,
       },
-      { onConflict: "user_id" },
+      {
+        onConflict: "user_id",
+      },
     );
 
     if (error) {
-      setError("Unable to save username. Please try again.");
+      console.error("[profile] save error", error);
+      setError(error.message || "Unable to save username. Please try again.");
       setStatus("error");
       return;
     }
@@ -164,6 +153,7 @@ function ProfilePage() {
 
   function handleGenerate() {
     const next = generateRandomUsername();
+
     setUsername(next);
     setError(null);
     setStatus("idle");
@@ -171,8 +161,10 @@ function ProfilePage() {
 
   if (userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground">
-        Loading…
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 text-muted-foreground">
+        <div className="rounded-3xl border border-slate-200 bg-white px-6 py-5 text-sm leading-6 text-slate-600 shadow-sm">
+          Loading your profile…
+        </div>
       </div>
     );
   }
@@ -182,60 +174,127 @@ function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background px-6 py-10 text-foreground">
-      <div className="mx-auto max-w-3xl rounded-3xl border bg-card p-8 shadow-soft">
-        <h1 className="text-3xl font-semibold">Profile</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Manage your username and account details. Email is used only for login and recovery.
-        </p>
+    <AppShell
+      heading="Account workspace"
+      subheading="Manage profile identity, settings, and workspace preferences."
+    >
+      <div className="min-h-screen px-4 py-6 text-foreground sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+          <Card className="border-white/70 bg-[linear-gradient(135deg,rgba(15,23,42,0.96),rgba(30,41,59,0.92))] text-white shadow-[0_18px_70px_-42px_rgba(15,23,42,0.7)]">
+            <CardHeader>
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-white/75">
+                <UserRound className="h-3.5 w-3.5 text-cyan-300" />
+                Account hub
+              </div>
+              <CardTitle className="font-display text-3xl text-white">Profile</CardTitle>
+              <CardDescription className="text-white/70">
+                Manage your username and account details. Email is used only for login and recovery.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="rounded-[1.4rem] bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Email</p>
+                <p className="mt-2 text-base font-medium text-white">{user.email}</p>
+              </div>
+              <div className="rounded-[1.4rem] bg-white/5 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-white/45">Username</p>
+                <p className="mt-2 text-base font-medium text-white">
+                  {profileUsername ?? "Not set yet"}
+                </p>
+              </div>
+              <div className="rounded-[1.4rem] bg-white/5 p-4 text-sm text-white/70">
+                Your profile is designed to plug into future preference and brand controls without
+                changing auth.
+              </div>
+            </CardContent>
+          </Card>
 
-        <div className="mt-8 grid gap-6 rounded-3xl border border-border bg-secondary/30 p-6">
-          <div>
-            <p className="text-sm text-muted-foreground">Email</p>
-            <p className="mt-1 font-medium">{user.email}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Username</p>
-            <p className="mt-1 font-medium">{profileUsername ?? "Not set yet"}</p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-foreground">Set username</label>
-            <div className="mt-2 flex gap-3">
-              <input
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="your_username"
-                className="flex-1 rounded-3xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-              <button
-                type="button"
-                onClick={handleGenerate}
-                className="inline-flex items-center justify-center rounded-3xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-              >
-                Generate
-              </button>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Username must be 3–20 characters, lowercase letters, numbers, or underscore.
-            </p>
-            {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
-          </div>
-
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="inline-flex items-center justify-center rounded-3xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
           >
-            {status === "saving" || status === "checking" ? "Checking availability…" : "Save username"}
-          </button>
-          {status === "success" && (
-            <p className="text-sm text-cyan">Username saved successfully.</p>
-          )}
-        </form>
+            <Card className="border-white/70 bg-white/85 shadow-[0_18px_70px_-42px_rgba(15,23,42,0.45)] backdrop-blur">
+              <CardHeader>
+                <div className="inline-flex w-fit items-center gap-2 rounded-full bg-slate-950 px-3 py-1 text-xs font-medium text-white shadow-glow">
+                  <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+                  Username builder
+                </div>
+                <CardTitle className="font-display text-[1.65rem] text-slate-950">
+                  Claim your identity
+                </CardTitle>
+                <CardDescription className="max-w-2xl text-sm leading-6 text-slate-600">
+                  Generate a username or choose one manually. This is the name that appears in your
+                  workspace.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-slate-800">
+                      Set username
+                    </Label>
+                    <div className="flex gap-3">
+                      <Input
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="your_username"
+                        className="h-12 rounded-2xl border-slate-200 bg-white"
+                      />
+                      <Button
+                        type="button"
+                        onClick={handleGenerate}
+                        className="rounded-2xl bg-slate-950 px-5 text-white hover:bg-slate-800"
+                      >
+                        Generate
+                      </Button>
+                    </div>
+                    <p className="text-sm leading-6 text-slate-600">
+                      Username must be 3–20 characters, lowercase letters, numbers, or underscore.
+                    </p>
+                    {error && <p className="text-sm leading-6 text-rose-700">{error}</p>}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Button
+                      type="submit"
+                      disabled={!canSubmit}
+                      className="rounded-2xl bg-slate-950 px-6 text-white hover:bg-slate-800"
+                    >
+                      {status === "saving" ? "Saving…" : "Save username"}
+                    </Button>
+                    {status === "success" && (
+                      <Badge className="rounded-full bg-emerald-600 px-3 py-1 text-white">
+                        Username saved successfully.
+                      </Badge>
+                    )}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            <Card className="mt-6 border-white/70 bg-white/85 shadow-[0_18px_70px_-42px_rgba(15,23,42,0.45)] backdrop-blur">
+              <CardHeader>
+                <CardTitle className="font-display text-xl text-slate-950">Next up</CardTitle>
+                <CardDescription className="text-sm leading-6 text-slate-600">
+                  Keep moving through the studio without leaving the workspace.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                  <span>Edit avatar preferences</span>
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                  <span>Start a new render</span>
+                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

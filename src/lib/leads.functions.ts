@@ -25,7 +25,7 @@ const filtersSchema = z.object({
 
 export const listLeadsFn = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .inputValidator((data: unknown) => filtersSchema.parse(data ?? {}))
+  .validator((data: unknown) => filtersSchema.parse(data ?? {}))
   .handler(async ({ data }): Promise<{ leads: Lead[] }> => {
     const leads = await listLeads(data);
     return { leads };

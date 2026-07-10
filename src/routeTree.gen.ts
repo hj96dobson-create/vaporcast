@@ -13,28 +13,42 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ConfirmWaitlistRouteImport } from './routes/confirm-waitlist'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AdminRouteRouteImport } from './routes/_admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardVoicesRouteImport } from './routes/dashboard/voices'
+import { Route as DashboardVideosRouteImport } from './routes/dashboard/videos'
+import { Route as DashboardTemplatesRouteImport } from './routes/dashboard/templates'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardRoadmapRouteImport } from './routes/dashboard/roadmap'
+import { Route as DashboardNotificationsRouteImport } from './routes/dashboard/notifications'
 import { Route as DashboardCreateRouteImport } from './routes/dashboard/create'
+import { Route as DashboardCommunityRouteImport } from './routes/dashboard/community'
+import { Route as DashboardBillingRouteImport } from './routes/dashboard/billing'
+import { Route as DashboardAvatarsRouteImport } from './routes/dashboard/avatars'
 import { Route as ApiWaitlistRouteImport } from './routes/api/waitlist'
-import { Route as AdminVideosRouteImport } from './routes/_admin/videos'
-import { Route as AdminUsersRouteImport } from './routes/_admin/users'
-import { Route as AdminTemplatesRouteImport } from './routes/_admin/templates'
-import { Route as AdminSupportRouteImport } from './routes/_admin/support'
-import { Route as AdminSettingsRouteImport } from './routes/_admin/settings'
-import { Route as AdminLogsRouteImport } from './routes/_admin/logs'
-import { Route as AdminDashboardRouteImport } from './routes/_admin/dashboard'
-import { Route as AdminBillingRouteImport } from './routes/_admin/billing'
-import { Route as AdminAvatarsRouteImport } from './routes/_admin/avatars'
-import { Route as AdminApiRouteImport } from './routes/_admin/api'
-import { Route as AdminAnalyticsRouteImport } from './routes/_admin/analytics'
+import { Route as AdminVideosRouteImport } from './routes/admin/videos'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as AdminTemplatesRouteImport } from './routes/admin/templates'
+import { Route as AdminSupportRouteImport } from './routes/admin/support'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminLogsRouteImport } from './routes/admin/logs'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminBillingRouteImport } from './routes/admin/billing'
+import { Route as AdminAvatarsRouteImport } from './routes/admin/avatars'
+import { Route as AdminApiRouteImport } from './routes/admin/api'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
+import { Route as AdminAccountRouteImport } from './routes/admin/account'
 import { Route as ApiWaitlistTierRouteImport } from './routes/api/waitlist.tier'
 import { Route as ApiWaitlistConfirmRouteImport } from './routes/api/waitlist.confirm'
 import { Route as ApiVideoStatusRouteImport } from './routes/api/video/status'
 import { Route as ApiVideoGenerateRouteImport } from './routes/api/video/generate'
 import { Route as AuthenticatedAdminWaitlistRouteImport } from './routes/_authenticated/admin.waitlist'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
+import { Route as ApiAvatarSessionStartRouteImport } from './routes/api/avatar/session/start'
+import { Route as ApiAvatarSessionSpeakRouteImport } from './routes/api/avatar/session/speak'
+import { Route as ApiAvatarSessionEndRouteImport } from './routes/api/avatar/session/end'
+import { Route as ApiAvatarProviderStatusRouteImport } from './routes/api/avatar/provider/status'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -56,12 +70,13 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRouteRoute = AdminRouteRouteImport.update({
-  id: '/_admin',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -69,9 +84,54 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardVoicesRoute = DashboardVoicesRouteImport.update({
+  id: '/voices',
+  path: '/voices',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardVideosRoute = DashboardVideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTemplatesRoute = DashboardTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardRoadmapRoute = DashboardRoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardCreateRoute = DashboardCreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCommunityRoute = DashboardCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardBillingRoute = DashboardBillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAvatarsRoute = DashboardAvatarsRouteImport.update({
+  id: '/avatars',
+  path: '/avatars',
   getParentRoute: () => DashboardRoute,
 } as any)
 const ApiWaitlistRoute = ApiWaitlistRouteImport.update({
@@ -134,6 +194,11 @@ const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminAccountRoute = AdminAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const ApiWaitlistTierRoute = ApiWaitlistTierRouteImport.update({
   id: '/tier',
   path: '/tier',
@@ -165,171 +230,283 @@ const AuthenticatedAdminLeadsRoute = AuthenticatedAdminLeadsRouteImport.update({
   path: '/admin/leads',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiAvatarSessionStartRoute = ApiAvatarSessionStartRouteImport.update({
+  id: '/api/avatar/session/start',
+  path: '/api/avatar/session/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAvatarSessionSpeakRoute = ApiAvatarSessionSpeakRouteImport.update({
+  id: '/api/avatar/session/speak',
+  path: '/api/avatar/session/speak',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAvatarSessionEndRoute = ApiAvatarSessionEndRouteImport.update({
+  id: '/api/avatar/session/end',
+  path: '/api/avatar/session/end',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAvatarProviderStatusRoute = ApiAvatarProviderStatusRouteImport.update({
+  id: '/api/avatar/provider/status',
+  path: '/api/avatar/provider/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/confirm-waitlist': typeof ConfirmWaitlistRoute
-  '/dashboard': typeof AdminDashboardRoute
-  '/profile': typeof ProfileRoute
-  '/analytics': typeof AdminAnalyticsRoute
-  '/api': typeof AdminApiRoute
-  '/avatars': typeof AdminAvatarsRoute
-  '/billing': typeof AdminBillingRoute
-  '/logs': typeof AdminLogsRoute
-  '/settings': typeof AdminSettingsRoute
-  '/support': typeof AdminSupportRoute
-  '/templates': typeof AdminTemplatesRoute
-  '/users': typeof AdminUsersRoute
-  '/videos': typeof AdminVideosRoute
-  '/api/waitlist': typeof ApiWaitlistRouteWithChildren
-  '/dashboard/create': typeof DashboardCreateRoute
-  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
-  '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
-  '/api/video/generate': typeof ApiVideoGenerateRoute
-  '/api/video/status': typeof ApiVideoStatusRoute
-  '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
-  '/api/waitlist/tier': typeof ApiWaitlistTierRoute
-}
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/confirm-waitlist': typeof ConfirmWaitlistRoute
-  '/dashboard': typeof AdminDashboardRoute
-  '/profile': typeof ProfileRoute
-  '/analytics': typeof AdminAnalyticsRoute
-  '/api': typeof AdminApiRoute
-  '/avatars': typeof AdminAvatarsRoute
-  '/billing': typeof AdminBillingRoute
-  '/logs': typeof AdminLogsRoute
-  '/settings': typeof AdminSettingsRoute
-  '/support': typeof AdminSupportRoute
-  '/templates': typeof AdminTemplatesRoute
-  '/users': typeof AdminUsersRoute
-  '/videos': typeof AdminVideosRoute
-  '/api/waitlist': typeof ApiWaitlistRouteWithChildren
-  '/dashboard/create': typeof DashboardCreateRoute
-  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
-  '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
-  '/api/video/generate': typeof ApiVideoGenerateRoute
-  '/api/video/status': typeof ApiVideoStatusRoute
-  '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
-  '/api/waitlist/tier': typeof ApiWaitlistTierRoute
-}
-export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/_admin': typeof AdminRouteRouteWithChildren
-  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/admin': typeof AdminRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/confirm-waitlist': typeof ConfirmWaitlistRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/profile': typeof ProfileRoute
-  '/_admin/analytics': typeof AdminAnalyticsRoute
-  '/_admin/api': typeof AdminApiRoute
-  '/_admin/avatars': typeof AdminAvatarsRoute
-  '/_admin/billing': typeof AdminBillingRoute
-  '/_admin/dashboard': typeof AdminDashboardRoute
-  '/_admin/logs': typeof AdminLogsRoute
-  '/_admin/settings': typeof AdminSettingsRoute
-  '/_admin/support': typeof AdminSupportRoute
-  '/_admin/templates': typeof AdminTemplatesRoute
-  '/_admin/users': typeof AdminUsersRoute
-  '/_admin/videos': typeof AdminVideosRoute
+  '/admin/account': typeof AdminAccountRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/api': typeof AdminApiRoute
+  '/admin/avatars': typeof AdminAvatarsRoute
+  '/admin/billing': typeof AdminBillingRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/logs': typeof AdminLogsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/templates': typeof AdminTemplatesRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/videos': typeof AdminVideosRoute
   '/api/waitlist': typeof ApiWaitlistRouteWithChildren
+  '/dashboard/avatars': typeof DashboardAvatarsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/community': typeof DashboardCommunityRoute
   '/dashboard/create': typeof DashboardCreateRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/roadmap': typeof DashboardRoadmapRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/templates': typeof DashboardTemplatesRoute
+  '/dashboard/videos': typeof DashboardVideosRoute
+  '/dashboard/voices': typeof DashboardVoicesRoute
+  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/api/video/generate': typeof ApiVideoGenerateRoute
+  '/api/video/status': typeof ApiVideoStatusRoute
+  '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
+  '/api/waitlist/tier': typeof ApiWaitlistTierRoute
+  '/api/avatar/provider/status': typeof ApiAvatarProviderStatusRoute
+  '/api/avatar/session/end': typeof ApiAvatarSessionEndRoute
+  '/api/avatar/session/speak': typeof ApiAvatarSessionSpeakRoute
+  '/api/avatar/session/start': typeof ApiAvatarSessionStartRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/confirm-waitlist': typeof ConfirmWaitlistRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/profile': typeof ProfileRoute
+  '/admin/account': typeof AdminAccountRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/api': typeof AdminApiRoute
+  '/admin/avatars': typeof AdminAvatarsRoute
+  '/admin/billing': typeof AdminBillingRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/logs': typeof AdminLogsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/templates': typeof AdminTemplatesRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/videos': typeof AdminVideosRoute
+  '/api/waitlist': typeof ApiWaitlistRouteWithChildren
+  '/dashboard/avatars': typeof DashboardAvatarsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/community': typeof DashboardCommunityRoute
+  '/dashboard/create': typeof DashboardCreateRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/roadmap': typeof DashboardRoadmapRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/templates': typeof DashboardTemplatesRoute
+  '/dashboard/videos': typeof DashboardVideosRoute
+  '/dashboard/voices': typeof DashboardVoicesRoute
+  '/admin/leads': typeof AuthenticatedAdminLeadsRoute
+  '/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
+  '/api/video/generate': typeof ApiVideoGenerateRoute
+  '/api/video/status': typeof ApiVideoStatusRoute
+  '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
+  '/api/waitlist/tier': typeof ApiWaitlistTierRoute
+  '/api/avatar/provider/status': typeof ApiAvatarProviderStatusRoute
+  '/api/avatar/session/end': typeof ApiAvatarSessionEndRoute
+  '/api/avatar/session/speak': typeof ApiAvatarSessionSpeakRoute
+  '/api/avatar/session/start': typeof ApiAvatarSessionStartRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/confirm-waitlist': typeof ConfirmWaitlistRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/profile': typeof ProfileRoute
+  '/admin/account': typeof AdminAccountRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/api': typeof AdminApiRoute
+  '/admin/avatars': typeof AdminAvatarsRoute
+  '/admin/billing': typeof AdminBillingRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/logs': typeof AdminLogsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/support': typeof AdminSupportRoute
+  '/admin/templates': typeof AdminTemplatesRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/videos': typeof AdminVideosRoute
+  '/api/waitlist': typeof ApiWaitlistRouteWithChildren
+  '/dashboard/avatars': typeof DashboardAvatarsRoute
+  '/dashboard/billing': typeof DashboardBillingRoute
+  '/dashboard/community': typeof DashboardCommunityRoute
+  '/dashboard/create': typeof DashboardCreateRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/roadmap': typeof DashboardRoadmapRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/templates': typeof DashboardTemplatesRoute
+  '/dashboard/videos': typeof DashboardVideosRoute
+  '/dashboard/voices': typeof DashboardVoicesRoute
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/waitlist': typeof AuthenticatedAdminWaitlistRoute
   '/api/video/generate': typeof ApiVideoGenerateRoute
   '/api/video/status': typeof ApiVideoStatusRoute
   '/api/waitlist/confirm': typeof ApiWaitlistConfirmRoute
   '/api/waitlist/tier': typeof ApiWaitlistTierRoute
+  '/api/avatar/provider/status': typeof ApiAvatarProviderStatusRoute
+  '/api/avatar/session/end': typeof ApiAvatarSessionEndRoute
+  '/api/avatar/session/speak': typeof ApiAvatarSessionSpeakRoute
+  '/api/avatar/session/start': typeof ApiAvatarSessionStartRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/auth'
     | '/confirm-waitlist'
     | '/dashboard'
     | '/profile'
-    | '/analytics'
-    | '/api'
-    | '/avatars'
-    | '/billing'
-    | '/logs'
-    | '/settings'
-    | '/support'
-    | '/templates'
-    | '/users'
-    | '/videos'
+    | '/admin/account'
+    | '/admin/analytics'
+    | '/admin/api'
+    | '/admin/avatars'
+    | '/admin/billing'
+    | '/admin/dashboard'
+    | '/admin/logs'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/templates'
+    | '/admin/users'
+    | '/admin/videos'
     | '/api/waitlist'
+    | '/dashboard/avatars'
+    | '/dashboard/billing'
+    | '/dashboard/community'
     | '/dashboard/create'
+    | '/dashboard/notifications'
+    | '/dashboard/roadmap'
+    | '/dashboard/settings'
+    | '/dashboard/templates'
+    | '/dashboard/videos'
+    | '/dashboard/voices'
     | '/admin/leads'
     | '/admin/waitlist'
     | '/api/video/generate'
     | '/api/video/status'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
+    | '/api/avatar/provider/status'
+    | '/api/avatar/session/end'
+    | '/api/avatar/session/speak'
+    | '/api/avatar/session/start'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/auth'
     | '/confirm-waitlist'
     | '/dashboard'
     | '/profile'
-    | '/analytics'
-    | '/api'
-    | '/avatars'
-    | '/billing'
-    | '/logs'
-    | '/settings'
-    | '/support'
-    | '/templates'
-    | '/users'
-    | '/videos'
+    | '/admin/account'
+    | '/admin/analytics'
+    | '/admin/api'
+    | '/admin/avatars'
+    | '/admin/billing'
+    | '/admin/dashboard'
+    | '/admin/logs'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/templates'
+    | '/admin/users'
+    | '/admin/videos'
     | '/api/waitlist'
+    | '/dashboard/avatars'
+    | '/dashboard/billing'
+    | '/dashboard/community'
     | '/dashboard/create'
+    | '/dashboard/notifications'
+    | '/dashboard/roadmap'
+    | '/dashboard/settings'
+    | '/dashboard/templates'
+    | '/dashboard/videos'
+    | '/dashboard/voices'
     | '/admin/leads'
     | '/admin/waitlist'
     | '/api/video/generate'
     | '/api/video/status'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
+    | '/api/avatar/provider/status'
+    | '/api/avatar/session/end'
+    | '/api/avatar/session/speak'
+    | '/api/avatar/session/start'
   id:
     | '__root__'
     | '/'
-    | '/_admin'
     | '/_authenticated'
+    | '/admin'
     | '/auth'
     | '/confirm-waitlist'
     | '/dashboard'
     | '/profile'
-    | '/_admin/analytics'
-    | '/_admin/api'
-    | '/_admin/avatars'
-    | '/_admin/billing'
-    | '/_admin/dashboard'
-    | '/_admin/logs'
-    | '/_admin/settings'
-    | '/_admin/support'
-    | '/_admin/templates'
-    | '/_admin/users'
-    | '/_admin/videos'
+    | '/admin/account'
+    | '/admin/analytics'
+    | '/admin/api'
+    | '/admin/avatars'
+    | '/admin/billing'
+    | '/admin/dashboard'
+    | '/admin/logs'
+    | '/admin/settings'
+    | '/admin/support'
+    | '/admin/templates'
+    | '/admin/users'
+    | '/admin/videos'
     | '/api/waitlist'
+    | '/dashboard/avatars'
+    | '/dashboard/billing'
+    | '/dashboard/community'
     | '/dashboard/create'
+    | '/dashboard/notifications'
+    | '/dashboard/roadmap'
+    | '/dashboard/settings'
+    | '/dashboard/templates'
+    | '/dashboard/videos'
+    | '/dashboard/voices'
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/waitlist'
     | '/api/video/generate'
     | '/api/video/status'
     | '/api/waitlist/confirm'
     | '/api/waitlist/tier'
+    | '/api/avatar/provider/status'
+    | '/api/avatar/session/end'
+    | '/api/avatar/session/speak'
+    | '/api/avatar/session/start'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ConfirmWaitlistRoute: typeof ConfirmWaitlistRoute
   DashboardRoute: typeof DashboardRouteWithChildren
@@ -337,6 +514,10 @@ export interface RootRouteChildren {
   ApiWaitlistRoute: typeof ApiWaitlistRouteWithChildren
   ApiVideoGenerateRoute: typeof ApiVideoGenerateRoute
   ApiVideoStatusRoute: typeof ApiVideoStatusRoute
+  ApiAvatarProviderStatusRoute: typeof ApiAvatarProviderStatusRoute
+  ApiAvatarSessionEndRoute: typeof ApiAvatarSessionEndRoute
+  ApiAvatarSessionSpeakRoute: typeof ApiAvatarSessionSpeakRoute
+  ApiAvatarSessionStartRoute: typeof ApiAvatarSessionStartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -369,18 +550,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_admin': {
-      id: '/_admin'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -390,11 +571,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/voices': {
+      id: '/dashboard/voices'
+      path: '/voices'
+      fullPath: '/dashboard/voices'
+      preLoaderRoute: typeof DashboardVoicesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/videos': {
+      id: '/dashboard/videos'
+      path: '/videos'
+      fullPath: '/dashboard/videos'
+      preLoaderRoute: typeof DashboardVideosRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/templates': {
+      id: '/dashboard/templates'
+      path: '/templates'
+      fullPath: '/dashboard/templates'
+      preLoaderRoute: typeof DashboardTemplatesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/roadmap': {
+      id: '/dashboard/roadmap'
+      path: '/roadmap'
+      fullPath: '/dashboard/roadmap'
+      preLoaderRoute: typeof DashboardRoadmapRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/notifications': {
+      id: '/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof DashboardNotificationsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/create': {
       id: '/dashboard/create'
       path: '/create'
       fullPath: '/dashboard/create'
       preLoaderRoute: typeof DashboardCreateRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/community': {
+      id: '/dashboard/community'
+      path: '/community'
+      fullPath: '/dashboard/community'
+      preLoaderRoute: typeof DashboardCommunityRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/billing': {
+      id: '/dashboard/billing'
+      path: '/billing'
+      fullPath: '/dashboard/billing'
+      preLoaderRoute: typeof DashboardBillingRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/avatars': {
+      id: '/dashboard/avatars'
+      path: '/avatars'
+      fullPath: '/dashboard/avatars'
+      preLoaderRoute: typeof DashboardAvatarsRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/api/waitlist': {
@@ -404,81 +648,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWaitlistRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_admin/videos': {
-      id: '/_admin/videos'
+    '/admin/videos': {
+      id: '/admin/videos'
       path: '/videos'
-      fullPath: '/videos'
+      fullPath: '/admin/videos'
       preLoaderRoute: typeof AdminVideosRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/users': {
-      id: '/_admin/users'
+    '/admin/users': {
+      id: '/admin/users'
       path: '/users'
-      fullPath: '/users'
+      fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/templates': {
-      id: '/_admin/templates'
+    '/admin/templates': {
+      id: '/admin/templates'
       path: '/templates'
-      fullPath: '/templates'
+      fullPath: '/admin/templates'
       preLoaderRoute: typeof AdminTemplatesRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/support': {
-      id: '/_admin/support'
+    '/admin/support': {
+      id: '/admin/support'
       path: '/support'
-      fullPath: '/support'
+      fullPath: '/admin/support'
       preLoaderRoute: typeof AdminSupportRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/settings': {
-      id: '/_admin/settings'
+    '/admin/settings': {
+      id: '/admin/settings'
       path: '/settings'
-      fullPath: '/settings'
+      fullPath: '/admin/settings'
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/logs': {
-      id: '/_admin/logs'
+    '/admin/logs': {
+      id: '/admin/logs'
       path: '/logs'
-      fullPath: '/logs'
+      fullPath: '/admin/logs'
       preLoaderRoute: typeof AdminLogsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/dashboard': {
-      id: '/_admin/dashboard'
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
       path: '/dashboard'
-      fullPath: '/dashboard'
+      fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/billing': {
-      id: '/_admin/billing'
+    '/admin/billing': {
+      id: '/admin/billing'
       path: '/billing'
-      fullPath: '/billing'
+      fullPath: '/admin/billing'
       preLoaderRoute: typeof AdminBillingRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/avatars': {
-      id: '/_admin/avatars'
+    '/admin/avatars': {
+      id: '/admin/avatars'
       path: '/avatars'
-      fullPath: '/avatars'
+      fullPath: '/admin/avatars'
       preLoaderRoute: typeof AdminAvatarsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/api': {
-      id: '/_admin/api'
+    '/admin/api': {
+      id: '/admin/api'
       path: '/api'
-      fullPath: '/api'
+      fullPath: '/admin/api'
       preLoaderRoute: typeof AdminApiRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/_admin/analytics': {
-      id: '/_admin/analytics'
+    '/admin/analytics': {
+      id: '/admin/analytics'
       path: '/analytics'
-      fullPath: '/analytics'
+      fullPath: '/admin/analytics'
       preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/account': {
+      id: '/admin/account'
+      path: '/account'
+      fullPath: '/admin/account'
+      preLoaderRoute: typeof AdminAccountRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/api/waitlist/tier': {
@@ -523,10 +774,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminLeadsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/avatar/session/start': {
+      id: '/api/avatar/session/start'
+      path: '/api/avatar/session/start'
+      fullPath: '/api/avatar/session/start'
+      preLoaderRoute: typeof ApiAvatarSessionStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/avatar/session/speak': {
+      id: '/api/avatar/session/speak'
+      path: '/api/avatar/session/speak'
+      fullPath: '/api/avatar/session/speak'
+      preLoaderRoute: typeof ApiAvatarSessionSpeakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/avatar/session/end': {
+      id: '/api/avatar/session/end'
+      path: '/api/avatar/session/end'
+      fullPath: '/api/avatar/session/end'
+      preLoaderRoute: typeof ApiAvatarSessionEndRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/avatar/provider/status': {
+      id: '/api/avatar/provider/status'
+      path: '/api/avatar/provider/status'
+      fullPath: '/api/avatar/provider/status'
+      preLoaderRoute: typeof ApiAvatarProviderStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
+  AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
+  AuthenticatedAdminWaitlistRoute: AuthenticatedAdminWaitlistRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 interface AdminRouteRouteChildren {
+  AdminAccountRoute: typeof AdminAccountRoute
   AdminAnalyticsRoute: typeof AdminAnalyticsRoute
   AdminApiRoute: typeof AdminApiRoute
   AdminAvatarsRoute: typeof AdminAvatarsRoute
@@ -541,6 +834,7 @@ interface AdminRouteRouteChildren {
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAccountRoute: AdminAccountRoute,
   AdminAnalyticsRoute: AdminAnalyticsRoute,
   AdminApiRoute: AdminApiRoute,
   AdminAvatarsRoute: AdminAvatarsRoute,
@@ -558,25 +852,30 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
-interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
-  AuthenticatedAdminWaitlistRoute: typeof AuthenticatedAdminWaitlistRoute
-}
-
-const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
-  AuthenticatedAdminWaitlistRoute: AuthenticatedAdminWaitlistRoute,
-}
-
-const AuthenticatedRouteRouteWithChildren =
-  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
-
 interface DashboardRouteChildren {
+  DashboardAvatarsRoute: typeof DashboardAvatarsRoute
+  DashboardBillingRoute: typeof DashboardBillingRoute
+  DashboardCommunityRoute: typeof DashboardCommunityRoute
   DashboardCreateRoute: typeof DashboardCreateRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
+  DashboardRoadmapRoute: typeof DashboardRoadmapRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardTemplatesRoute: typeof DashboardTemplatesRoute
+  DashboardVideosRoute: typeof DashboardVideosRoute
+  DashboardVoicesRoute: typeof DashboardVoicesRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAvatarsRoute: DashboardAvatarsRoute,
+  DashboardBillingRoute: DashboardBillingRoute,
+  DashboardCommunityRoute: DashboardCommunityRoute,
   DashboardCreateRoute: DashboardCreateRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRoute,
+  DashboardRoadmapRoute: DashboardRoadmapRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardTemplatesRoute: DashboardTemplatesRoute,
+  DashboardVideosRoute: DashboardVideosRoute,
+  DashboardVoicesRoute: DashboardVoicesRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -599,8 +898,8 @@ const ApiWaitlistRouteWithChildren = ApiWaitlistRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRouteRoute: AdminRouteRouteWithChildren,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ConfirmWaitlistRoute: ConfirmWaitlistRoute,
   DashboardRoute: DashboardRouteWithChildren,
@@ -608,6 +907,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiWaitlistRoute: ApiWaitlistRouteWithChildren,
   ApiVideoGenerateRoute: ApiVideoGenerateRoute,
   ApiVideoStatusRoute: ApiVideoStatusRoute,
+  ApiAvatarProviderStatusRoute: ApiAvatarProviderStatusRoute,
+  ApiAvatarSessionEndRoute: ApiAvatarSessionEndRoute,
+  ApiAvatarSessionSpeakRoute: ApiAvatarSessionSpeakRoute,
+  ApiAvatarSessionStartRoute: ApiAvatarSessionStartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

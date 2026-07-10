@@ -11,7 +11,11 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  supabase,
+  supabaseClientMissingEnv,
+  supabaseClientReady,
+} from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -131,6 +135,8 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!supabaseClientReady) return;
+
     // Single global auth listener: re-run route guards + refetch queries on
     // identity changes so protected routes react to sign-in/out without a
     // manual refresh. Filter to identity events — TOKEN_REFRESHED and
@@ -145,6 +151,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      {!supabaseClientReady ? (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-800">
+          Missing client env: {supabaseClientMissingEnv.join(", ")}. Authentication features are
+          disabled until configured.
+        </div>
+      ) : null}
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
