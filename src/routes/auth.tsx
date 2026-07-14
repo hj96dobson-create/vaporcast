@@ -69,6 +69,19 @@ function AuthPage() {
 
   const envErrorMessage = `Authentication is unavailable. Missing client environment variable(s): ${supabaseClientMissingEnv.join(", ")}.`;
 
+  async function getSessionWithTimeout(timeoutMs = 4000) {
+    return Promise.race([
+      supabase.auth.getSession(),
+      new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error("Session check timed out. Please verify Supabase environment variables."),
+          );
+        }, timeoutMs);
+      }),
+    ]);
+  }
+
   useEffect(() => {
     if (!supabaseClientReady) {
       setCheckingSession(false);
@@ -89,28 +102,35 @@ function AuthPage() {
     }
     // Wait for Supabase to hydrate its session from storage before deciding
     // whether to bounce an already-signed-in user to their destination.
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (data.session) {
-        const userId = data.session.user.id;
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("user_id", userId)
-          .single();
+    void (async () => {
+      try {
+        const { data } = await getSessionWithTimeout();
 
-        if (!profileData?.username) {
+        if (data.session) {
+          const userId = data.session.user.id;
+          const { data: profileData } = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("user_id", userId)
+            .single();
+
+          if (!profileData?.username) {
+            clearStoredRedirect();
+            navigate({ to: "/profile", replace: true });
+            return;
+          }
+
+          const dest = resolveDest();
           clearStoredRedirect();
-          navigate({ to: "/profile", replace: true });
+          navigate({ to: dest, replace: true });
           return;
         }
-
-        const dest = resolveDest();
-        clearStoredRedirect();
-        navigate({ to: dest, replace: true });
-      } else {
-        setCheckingSession(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unable to verify session.");
       }
-    });
+
+      setCheckingSession(false);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [redirect, navigate, envErrorMessage]);
 
@@ -301,12 +321,7 @@ function AuthPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={onGoogle}
-            disabled={loading || !supabaseClientReady}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-medium shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-          >
+
             <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
               <path
                 fill="#FFC107"
@@ -325,8 +340,7 @@ function AuthPage() {
                 d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.2-4.1 5.6l6.2 5.2c-.4.4 6.6-4.8 6.6-14.8 0-1.2-.1-2.3-.4-3.5z"
               />
             </svg>
-            Continue with Google
-          </button>
+          
 
           <div className="mt-6 flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-slate-400">
             <span className="h-px flex-1 bg-slate-200" />

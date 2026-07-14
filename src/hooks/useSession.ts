@@ -15,11 +15,21 @@ export function useSession() {
 
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!mounted) return;
+        setSession(data.session);
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        console.error("Failed to restore session", error);
+        setSession(null);
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
 
     const { data } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);

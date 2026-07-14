@@ -50,9 +50,19 @@ export function useAuthUser() {
       setLoading(false);
     };
 
-    supabase.auth.getSession().then(({ data }) => {
-      void syncAuthState(data.session);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        void syncAuthState(data.session);
+      })
+      .catch((error) => {
+        if (!mounted) return;
+        console.error("Failed to restore auth state", error);
+        setSession(null);
+        setUser(null);
+        setIsAdmin(false);
+        setLoading(false);
+      });
 
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       void syncAuthState(nextSession);
