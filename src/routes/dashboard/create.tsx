@@ -64,6 +64,9 @@ type ScenePlanItem = {
 export const Route = createFileRoute("/dashboard/create")({
   validateSearch: (search: Record<string, unknown>): CreateSearch => ({
     avatar: typeof search.avatar === "string" ? search.avatar : undefined,
+    featureTitle: typeof search.featureTitle === "string" ? search.featureTitle : undefined,
+    featureDescription:
+      typeof search.featureDescription === "string" ? search.featureDescription : undefined,
   }),
   component: CreateVideoPage,
 });
