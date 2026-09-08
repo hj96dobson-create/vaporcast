@@ -26,6 +26,8 @@ import {
 
 type CreateSearch = {
   avatar?: string;
+  featureTitle?: string;
+  featureDescription?: string;
 };
 
 const promptSuggestions = [
