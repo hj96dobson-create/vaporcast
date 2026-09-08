@@ -4,7 +4,11 @@ import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 import { reportServerEnvHealth } from "@/lib/env.server";
 
-reportServerEnvHealth();
+// Server-only health log; in the browser process.env is empty and would
+// always report false "missing variable" errors.
+if (typeof window === "undefined") {
+  reportServerEnvHealth();
+}
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {

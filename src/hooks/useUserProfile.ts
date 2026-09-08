@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "./useSession";
 
 type UserProfile = {
-  username: string;
+  username: string | null;
 };
 
 export function useUserProfile() {

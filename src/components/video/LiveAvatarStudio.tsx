@@ -108,9 +108,11 @@ export function LiveAvatarStudio() {
   const localVoiceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const [selectedAvatar, setSelectedAvatar] = useState<VideoAvatarId>(defaultVideoAvatarId);
-  const [selectedVoice, setSelectedVoice] = useState(videoAvatars[0].voiceOptions[0]);
-  const [selectedLanguage, setSelectedLanguage] = useState(videoAvatars[0].languages[0]);
-  const [selectedPersonality, setSelectedPersonality] = useState(videoAvatars[0].personality);
+  const [selectedVoice, setSelectedVoice] = useState<string>(videoAvatars[0].voiceOptions[0]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(videoAvatars[0].languages[0]);
+  const [selectedPersonality, setSelectedPersonality] = useState<string>(
+    videoAvatars[0].personality,
+  );
   const [selectedEmotion, setSelectedEmotion] = useState("Confident");
   const [selectedStyle, setSelectedStyle] = useState("Studio");
   const [selectedBackground, setSelectedBackground] = useState("Studio");
